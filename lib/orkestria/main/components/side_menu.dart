@@ -53,7 +53,11 @@ class SideMenu extends StatelessWidget {
           DrawerListTile(
             title: "Logout",
             icon: LucideIcons.log_out,
-            press: () {},
+            press: () {
+              //TODO: replace with goRouter
+                Navigator.pop(context);
+                Navigator.pop(context);
+            },
           ),
         ],
       ),

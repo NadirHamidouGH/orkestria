@@ -58,7 +58,9 @@ class SignUpForm extends StatelessWidget {
           ),
           const SizedBox(height: defaultPadding / 2),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
             child: Text("Sign Up".toUpperCase(),
             style: const TextStyle(color: Colors.white),),
           ),

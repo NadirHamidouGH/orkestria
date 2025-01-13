@@ -22,15 +22,6 @@ class MyApp extends StatelessWidget {
       ),
       home: const LoginScreen(),
 
-      // MultiProvider(
-      //   providers: [
-      //     ChangeNotifierProvider(
-      //       create: (context) => MenuAppController(),
-      //     ),
-      //   ],
-      //   child: MainScreen(),
-      // ),
-
     );
   }
 }
