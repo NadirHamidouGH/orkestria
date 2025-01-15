@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:orkestria/core/constants.dart';
+import 'package:orkestria/orkestria/alerts/presentation/screens/alerts_screen.dart';
+import 'package:orkestria/orkestria/camera%20kpi/presentation/screens/camera_kpi_screen.dart';
+import 'package:orkestria/orkestria/profile/presentation/screens/profile_screen.dart';
+import 'package:orkestria/orkestria/projects/presentation/routes/projects_route.dart';
+import 'package:orkestria/orkestria/recording/presentation/screens/recording_screen.dart';
+import 'package:orkestria/orkestria/settings/presentation/screens/settings_screen.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({
@@ -10,6 +17,7 @@ class SideMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: bgColor,
       child: ListView(
         children: [
           DrawerHeader(
@@ -18,40 +26,89 @@ class SideMenu extends StatelessWidget {
           DrawerListTile(
             title: "Dashboard",
             icon: LucideIcons.layout_dashboard,
-            press: () {},
+            press: () {
+              Navigator.pop(context);
+            },
           ),
           DrawerListTile(
-            title: "Projects",
-            icon: LucideIcons.folder_kanban,
-            press: () {},
+            title: "Sites",
+            icon: LucideIcons.factory,
+            press: () {
+              GoRouter.of(context).push(projectsRoutePath);
+            },
           ),
           DrawerListTile(
             title: "Alerts",
             icon: LucideIcons.triangle_alert,
-            press: () {},
+            press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const AlertsScreen();
+                  },
+                ),
+              );
+            },
           ),
           DrawerListTile(
             title: "Recording",
             icon: LucideIcons.file_video_2,
-            press: () {},
+            press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const RecordingScreen();
+                  },
+                ),
+              );
+            },
           ),
           DrawerListTile(
             title: "Camera KPI",
             icon: LucideIcons.scan_eye,
-            press: () {},
+            press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const CameraKpiScreen();
+                  },
+                ),
+              );
+            },
           ),
           DrawerListTile(
             title: "Profile",
             icon: LucideIcons.user,
-            press: () {},
+            press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const ProfileScreen();
+                  },
+                ),
+              );
+            },
           ),
           DrawerListTile(
             title: "Settings",
             icon: LucideIcons.settings,
-            press: () {},
+            press: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return SettingsScreen();
+                  },
+                ),
+              );
+            },
           ),
           DrawerListTile(
-            title: "Logout",
+            title: "Sign Out",
             icon: LucideIcons.log_out,
             press: () {
               //TODO: replace with goRouter
@@ -86,7 +143,7 @@ class DrawerListTile extends StatelessWidget {
       leading: Icon(icon),
       title: Text(
         title,
-        style: const TextStyle(color: Colors.white),
+        style: subtitle2,
       ),
     );
   }

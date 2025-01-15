@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:orkestria/main.dart';
 import 'package:provider/provider.dart';
-import '../../controllers/menu_app_controller.dart';
-import '../../responsive.dart';
-import '../dashboard/dashboard_screen.dart';
+import '../../core/utils/responsive.dart';
+import '../dashboard/presentation/screens/dashboard_screen.dart';
 import 'components/side_menu.dart';
 
 class MainScreen extends StatelessWidget {
