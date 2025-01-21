@@ -89,7 +89,7 @@ class ProjectDetailsList extends StatelessWidget {
               children: [
                 ProjectDetails(
                   projectName: "CP Alger",
-                  description: "Project Description",
+                  description: "Site Description",
                   iconsData: [
                     {"icon": LucideIcons.cctv, "text": "8"},
                     {"icon": LucideIcons.map_pin, "text": "3"},
@@ -99,7 +99,7 @@ class ProjectDetailsList extends StatelessWidget {
                 SizedBox(width: defaultPadding),
                 ProjectDetails(
                   projectName: "CP Boumerdes",
-                  description: "Project Description",
+                  description: "Site Description",
                   iconsData: [
                     {"icon": LucideIcons.cctv, "text": "5"},
                     {"icon": LucideIcons.map_pin, "text": "2"},
@@ -109,7 +109,7 @@ class ProjectDetailsList extends StatelessWidget {
                 SizedBox(width: defaultPadding),
                 ProjectDetails(
                   projectName: "CP Oran",
-                  description: "Project Description",
+                  description: "Site Description",
                   iconsData: [
                     {"icon": LucideIcons.cctv, "text": "5"},
                     {"icon": LucideIcons.map_pin, "text": "10"},

@@ -31,14 +31,16 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     // Animation pour le déplacement vertical (de 0 à -50 pixels)
-    _positionAnimation = Tween<double>(begin: 0, end: -240).animate(
+    _positionAnimation = Tween<double>(begin: 0, end: -230).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
 
-    _controller.forward(); // Démarre l'animation
+    Future.delayed(const Duration(seconds: 1), () {
+      _controller.forward();
+    });
 
     // Naviguer vers la page suivante après 2 secondes
-    Timer(const Duration(seconds: 2), () {
+    Timer(const Duration(seconds: 3), () {
       GoRouter.of(context).push(loginRoutePath);
     });
   }

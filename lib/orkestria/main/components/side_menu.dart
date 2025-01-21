@@ -3,6 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import 'package:orkestria/core/constants.dart';
 import 'package:orkestria/orkestria/alerts/presentation/screens/alerts_screen.dart';
+import 'package:orkestria/orkestria/auth/presentation/routes/login_route.dart';
 import 'package:orkestria/orkestria/camera%20kpi/presentation/screens/camera_kpi_screen.dart';
 import 'package:orkestria/orkestria/profile/presentation/screens/profile_screen.dart';
 import 'package:orkestria/orkestria/projects/presentation/routes/projects_route.dart';
@@ -66,7 +67,7 @@ class SideMenu extends StatelessWidget {
             },
           ),
           DrawerListTile(
-            title: "Camera KPI",
+            title: "Cameras",
             icon: LucideIcons.scan_eye,
             press: () {
               Navigator.push(
@@ -111,9 +112,7 @@ class SideMenu extends StatelessWidget {
             title: "Sign Out",
             icon: LucideIcons.log_out,
             press: () {
-              //TODO: replace with goRouter
-                Navigator.pop(context);
-                Navigator.pop(context);
+              GoRouter.of(context).go(loginRoutePath);
             },
           ),
         ],

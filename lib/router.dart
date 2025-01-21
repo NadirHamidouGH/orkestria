@@ -11,6 +11,7 @@ import 'package:orkestria/orkestria/auth/presentation/routes/login_route.dart';
 import 'package:orkestria/orkestria/auth/presentation/routes/signup_route.dart';
 import 'package:orkestria/orkestria/auth/presentation/routes/splash_route.dart';
 import 'package:orkestria/orkestria/camera%20kpi/presentation/routes/camera_kpi_route.dart';
+import 'package:orkestria/orkestria/main/presentation/routes/main_route.dart';
 import 'package:orkestria/orkestria/profile/presentation/routes/profile_route.dart';
 import 'package:orkestria/orkestria/projects/presentation/routes/projects_route.dart';
 import 'package:orkestria/orkestria/recording/presentation/routes/recording_route.dart';
@@ -33,6 +34,7 @@ final GoRouter appRouter = GoRouter(
     splashRoute,
     loginRoute,
     signupRoute,
+    mainRoute,
     profileRoute,
     alertsRoute,
     cameraKpiRoute,

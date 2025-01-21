@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:orkestria/main.dart';
 import 'package:orkestria/orkestria/profile/presentation/routes/profile_route.dart';
 import 'package:orkestria/orkestria/profile/presentation/screens/profile_screen.dart';
+import 'package:orkestria/orkestria/projects/presentation/project_provider/project_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants.dart';
 import '../../../../core/utils/responsive.dart';

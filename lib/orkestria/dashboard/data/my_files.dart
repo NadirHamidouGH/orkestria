@@ -19,8 +19,8 @@ class CloudStorageInfo {
 
 List demoMyFiles = [
   CloudStorageInfo(
-    title: "Projects",
-    numOfFiles: "3 projets",
+    title: "Sites",
+    numOfFiles: "3 sites",
     svgSrc: "assets/icons/projects.svg",
     totalStorage: "",
     color: primaryColor,
@@ -34,7 +34,7 @@ List demoMyFiles = [
     color: Color(0xFFFFA113),
   ),
   CloudStorageInfo(
-    title: "Borads",
+    title: "Boards",
     numOfFiles: "12 Board",
     svgSrc: "assets/icons/marker.svg",
     totalStorage: "3 zones",
