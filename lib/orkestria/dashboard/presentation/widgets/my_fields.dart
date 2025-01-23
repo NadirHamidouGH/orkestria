@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:orkestria/orkestria/dashboard/presentation/widgets/project_details.dart';
+// import 'package:orkestria/orkestria/projects/presentation/widgets/project_details_list.dart';
 import '../../../../core/constants.dart';
 import '../../data/my_files.dart';
 import '../../../../core/utils/responsive.dart';
@@ -42,7 +43,7 @@ class MyFiles extends StatelessWidget {
         const SizedBox(height: defaultPadding),
 
 
-            const ProjectDetailsList(),
+            const DynamicProjectList(),
 
 
         const SizedBox(height: defaultPadding),

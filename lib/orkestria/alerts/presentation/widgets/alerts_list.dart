@@ -13,15 +13,17 @@ class AlertsList extends StatefulWidget {
 }
 
 class _AlertsListState extends State<AlertsList> {
-  late Future<List<Alert>> _alertsFuture;
+  int _currentPage = 0;
+  final int _itemsPerPage = 9;
+  Future<List<Alert>>? _alertsFuture;
 
   @override
   void initState() {
     super.initState();
-    _alertsFuture = fetchAlerts();
+    _alertsFuture = fetchAlerts(_currentPage);
   }
 
-  Future<List<Alert>> fetchAlerts() async {
+  Future<List<Alert>> fetchAlerts(int page) async {
     final dio = Dio();
     final sharedPreferences = await SharedPreferences.getInstance();
     final bearerToken = sharedPreferences.getString('authToken');
@@ -36,7 +38,7 @@ class _AlertsListState extends State<AlertsList> {
 
     try {
       var response = await dio.request(
-        'https://ms.camapp.dev.fortest.store/projects/alerts/',
+        'https://ms.camapp.dev.fortest.store/projects/alerts/?skip=${page * _itemsPerPage}&limit=$_itemsPerPage',
         options: Options(
           method: 'GET',
           headers: headers,
@@ -54,33 +56,52 @@ class _AlertsListState extends State<AlertsList> {
     }
   }
 
+  void _loadNextPage() {
+    setState(() {
+      _currentPage++;
+      _alertsFuture = fetchAlerts(_currentPage);
+    });
+  }
+
+  void _loadPreviousPage() {
+    if (_currentPage > 0) {
+      setState(() {
+        _currentPage--;
+        _alertsFuture = fetchAlerts(_currentPage);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Alert>>(
-      future: _alertsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No alerts found.'));
-        } else {
-          List<Alert> alertList = snapshot.data!;
-          return Container(
-            padding: const EdgeInsets.all(paddingHalf),
-            decoration: const BoxDecoration(
-              color: secondaryColor,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+    return Container(
+      padding: const EdgeInsets.all(paddingHalf),
+      decoration: const BoxDecoration(
+        color: secondaryColor,
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Alerts",
+              style: heading2,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Alerts",
-                  style: heading2,
-                ),
-                SizedBox(
+            FutureBuilder<List<Alert>>(
+              future: _alertsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No alerts found.'));
+                }
+
+                final alerts = snapshot.data!;
+                return SizedBox(
                   width: double.infinity,
                   child: DataTable(
                     columnSpacing: 4,
@@ -95,17 +116,29 @@ class _AlertsListState extends State<AlertsList> {
                         label: Text("Status"),
                       ),
                     ],
-                    rows: List.generate(
-                      alertList.length,
-                          (index) => alertDataRow(alertList[index]),
-                    ),
+                    rows: alerts.map((alert) => alertDataRow(alert)).toList(),
                   ),
+                );
+              },
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: _loadPreviousPage,
+                  tooltip: 'Previous Page',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.arrow_forward),
+                  onPressed: _loadNextPage,
+                  tooltip: 'Next Page',
                 ),
               ],
             ),
-          );
-        }
-      },
+          ],
+        ),
+      ),
     );
   }
 
@@ -117,17 +150,14 @@ class _AlertsListState extends State<AlertsList> {
             children: [
               SvgPicture.asset(
                 color: Colors.grey,
-                "assets/icons/alert.svg" ?? '', // Remplace avec un chemin par défaut si nécessaire
+                "assets/icons/alert.svg", // Remplace avec un chemin par défaut si nécessaire
                 height: 18,
                 width: 18,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+                padding: const EdgeInsets.only(left: 4),
                 child: Text(
-                  (alert.message ?? '')
-                      .split(' ')
-                      .take(3)
-                      .join(' '),
+                  (alert.message ?? '').split(' ').take(3).join(' '),
                   style: const TextStyle(fontSize: 12),
                 ),
               ),
@@ -136,7 +166,9 @@ class _AlertsListState extends State<AlertsList> {
         ),
         DataCell(
           Text(
-            (alert.createdAt.length > 10 ? alert.createdAt.substring(0, 10) : alert.createdAt),
+            (alert.createdAt.length > 10
+                ? alert.createdAt.substring(0, 10)
+                : alert.createdAt),
             style: const TextStyle(fontSize: 12),
           ),
         ),

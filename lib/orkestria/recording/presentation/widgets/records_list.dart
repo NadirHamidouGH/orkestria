@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:dio/dio.dart';
 import 'package:orkestria/orkestria/recording/domain/entities/record.dart';
@@ -14,7 +15,7 @@ class RecordsList extends StatefulWidget {
 
 class _RecordsListState extends State<RecordsList> {
   int _currentPage = 0;
-  final int _itemsPerPage = 12;
+  final int _itemsPerPage = 9;
   Future<List<Records>>? _recordsFuture;
 
   @override
@@ -87,7 +88,7 @@ class _RecordsListState extends State<RecordsList> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Recordings",
+              "Camera KPI",
               style: heading2,
             ),
             FutureBuilder<List<Records>>(
@@ -112,7 +113,7 @@ class _RecordsListState extends State<RecordsList> {
                 return SizedBox(
                   width: double.infinity,
                   child: DataTable(
-                    columnSpacing: defaultPadding,
+                    columnSpacing: 4,
                     columns: const [
                       DataColumn(
                         label: Text("Object"),
@@ -121,7 +122,10 @@ class _RecordsListState extends State<RecordsList> {
                         label: Text("Date"),
                       ),
                       DataColumn(
-                        label: Text("Confidence"),
+                        label: Text("IC"),
+                      ),
+                      DataColumn(
+                        label: Text("Image"),
                       ),
                     ],
                     rows: records.map((record) => recordDataRow(record)).toList(),
@@ -162,12 +166,10 @@ class _RecordsListState extends State<RecordsList> {
                 height: 18,
                 width: 18,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-                child: Text(
-                  record.objectClass,
-                  style: const TextStyle(fontSize: 12),
-                ),
+              Text(
+                textAlign: TextAlign.left,
+                record.objectClass,
+                style: const TextStyle(fontSize: 12),
               ),
             ],
           ),
@@ -180,11 +182,82 @@ class _RecordsListState extends State<RecordsList> {
         ),
         DataCell(
           Text(
+            textAlign: TextAlign.center,
             record.confidence.toStringAsFixed(2),
             style: const TextStyle(fontSize: 12),
+          ),
+        ),
+        DataCell(
+          IconButton(
+            icon: const Icon(LucideIcons.image),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return ImageModal(imageUrl: truncateString(record.imagePath));
+                },
+              );
+            },
           ),
         ),
       ],
     );
   }
 }
+
+String truncateString(String inputString) {
+  int index = inputString.indexOf("?response-content-type=");
+  if (index != -1) {
+    return inputString.substring(0, index);
+  } else {
+    return inputString;
+  }
+}
+
+
+class ImageModal extends StatefulWidget {
+  final String imageUrl;
+
+  const ImageModal({Key? key, required this.imageUrl}) : super(key: key);
+
+  @override
+  State<ImageModal> createState() => _ImageModalState();
+}
+
+class _ImageModalState extends State<ImageModal> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImage();
+  }
+
+  Future<void> _loadImage() async {
+    // Simulate loading delay (replace with your actual image loading logic)
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(
+        width: 350,
+        padding: const EdgeInsets.all(16.0),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : InteractiveViewer(
+          maxScale: 4.0, // Adjust max zoom level as needed
+          child: Image.network(
+            widget.imageUrl,
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+    );
+  }
+}
+

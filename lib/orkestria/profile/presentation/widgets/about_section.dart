@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:orkestria/core/constants.dart';
+import 'package:orkestria/core/utils/colors.dart';
+import 'package:orkestria/orkestria/profile/domain/entities/profil.dart';
 
 class AboutSection extends StatelessWidget {
-  const AboutSection({super.key});
+  final Profile profile;
+  const AboutSection({super.key, required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +21,14 @@ class AboutSection extends StatelessWidget {
         ),
         color: Colors.white,
         child: Container(
-          padding: const EdgeInsets.all(30),
-          child: const Text(
-            "Ce compte premet a l'utilisateur de faire le monitoring sur les cameras et les capteurs de la zone CP alger ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            style: TextStyle(color: Colors.black),
+          decoration: const BoxDecoration(
+            color: secondaryColor,
+            borderRadius: BorderRadius.all(Radius.circular(10))
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Text(
+              profile.username,
+            style: subtitle2,
           ),
         ),
       ),

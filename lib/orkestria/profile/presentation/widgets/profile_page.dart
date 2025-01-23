@@ -1,8 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:orkestria/core/constants.dart';
+import 'package:orkestria/orkestria/profile/domain/entities/profil.dart';
 import 'package:orkestria/orkestria/profile/presentation/widgets/about_section.dart';
 import 'package:orkestria/orkestria/profile/presentation/widgets/contact_section.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -29,6 +32,46 @@ class _ProfilePageState extends State<ProfilePage> {
     ),
   ];
 
+  Profile? profile;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProfile(); // Fetch profile data when the widget initializes
+  }
+
+  Future<void> _fetchProfile() async {
+    try {
+      final sharedPreferences = await SharedPreferences.getInstance();
+      final bearerToken = sharedPreferences.getString('authToken');
+
+      if (bearerToken != null) {
+        final fetchedProfile = await fetchProfile(bearerToken);
+        setState(() {
+          profile = fetchedProfile; // Save the fetched profile data
+        });
+      } else {
+        print('Bearer token not found');
+      }
+    } catch (error) {
+      print('Error fetching profile: $error');
+    }
+  }
+
+  Future<Profile> fetchProfile(String token) async {
+    const url = 'https://ms.camapp.dev.fortest.store/projects/keycloak/users/abdelhak';
+    final headers = {
+      'Authorization': 'Bearer $token',
+    };
+
+    final response = await Dio().get(url, options: Options(headers: headers));
+    if (response.statusCode == 200) {
+      return Profile.fromJson(response.data);
+    } else {
+      throw Exception('Failed to fetch profile');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -36,7 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Scaffold(
         appBar: AppBar(
           elevation: 2,
-          automaticallyImplyLeading : false,
+          automaticallyImplyLeading: false,
           backgroundColor: bgColor,
           titleTextStyle: const TextStyle(
             color: Colors.white,
@@ -44,17 +87,18 @@ class _ProfilePageState extends State<ProfilePage> {
           toolbarHeight: 180,
           title: Padding(
             padding: const EdgeInsets.only(top: 8.0),
-            child: Column(
+            child: profile != null ? Column(
+
               children: [
-                profilePhotos(),
-                profileName(),
-                hobbies(),
+                profilePhotos(profile!),
+                profileName(profile!),
+                hobbies(profile!),
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
-                  child: stats(),
+                  child: stats(profile!),
                 ),
               ],
-            ),
+            ):const Center(child: CircularProgressIndicator()),
           ),
           bottom: TabBar(
             tabs: tabs,
@@ -63,13 +107,15 @@ class _ProfilePageState extends State<ProfilePage> {
             labelColor: Colors.white,
           ),
         ),
-        body: TabBarView(
+        body: profile == null
+            ? const Center(child: SizedBox()) // Show loading indicator while data is fetched
+            : TabBarView(
           children: [
             SingleChildScrollView(
-              child: contactSection(),
+              child: ContactSection(profile: profile!),
             ),
-            const SingleChildScrollView(
-              child: AboutSection(),
+            SingleChildScrollView(
+              child: AboutSection(profile: profile!),
             ),
           ],
         ),
@@ -77,7 +123,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Padding hobbies() {
+  Padding hobbies(Profile profile) {
     return const Padding(
       padding: EdgeInsets.only(
         top: 5.0,
@@ -88,18 +134,18 @@ class _ProfilePageState extends State<ProfilePage> {
         style: TextStyle(
           fontWeight: FontWeight.normal,
           fontSize: 14,
-          color: Colors.grey
+          color: Colors.grey,
         ),
       ),
     );
   }
 
-  Padding profileName() {
-    return const Padding(
+  Padding profileName(Profile profile) {
+    return Padding(
       padding: EdgeInsets.only(top: 8.0),
       child: Text(
-        "Nadir HAMIDOU",
-        style: TextStyle(
+        "${profile.firstName} ${profile.lastName}",
+        style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
         ),
@@ -107,7 +153,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Row stats() {
+  Row stats(Profile profile) {
     return const Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -163,7 +209,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Container profilePhotos() {
+  Container profilePhotos(Profile profile) {
     return Container(
       decoration: const BoxDecoration(
         shape: BoxShape.circle,

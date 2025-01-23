@@ -53,7 +53,7 @@ class SideMenu extends StatelessWidget {
             },
           ),
           DrawerListTile(
-            title: "Recording",
+            title: "Camera KPI",
             icon: LucideIcons.file_video_2,
             press: () {
               Navigator.push(

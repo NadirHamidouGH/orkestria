@@ -16,6 +16,7 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
+  bool hidePasswod = true;
   String? errorMessage;
 
   // put it in separate business logic
@@ -79,13 +80,18 @@ class _LoginFormState extends State<LoginForm> {
             child: TextFormField(
               controller: passwordController,
               textInputAction: TextInputAction.done,
-              obscureText: true,
+              obscureText: hidePasswod,
               cursorColor: kPrimaryColor,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: "Your password",
                 prefixIcon: Padding(
-                  padding: EdgeInsets.all(4),
-                  child: Icon(Icons.lock),
+                  padding: const EdgeInsets.all(4),
+                  child: GestureDetector(
+                      onTap: (){
+                        hidePasswod = !hidePasswod;
+                        setState(() {});
+                      },
+                      child: Icon(hidePasswod ? Icons.lock:Icons.lock_open_outlined))
                 ),
               ),
             ),
