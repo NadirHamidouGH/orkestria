@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:dio/dio.dart';
 import 'package:orkestria/orkestria/camera%20kpi/domain/entities/camera.dart';
+import 'package:orkestria/orkestria/dashboard/presentation/widgets/load_widget_logo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants.dart';
 
@@ -94,7 +95,7 @@ class _CameraListState extends State<CameraList> {
                 return const Center(
                   // child: Column(
                   //   children: [
-                  child: CircularProgressIndicator(),
+                  child: LoaderWidget(),
                       // Spacer()
                   //   ],
                   // ),

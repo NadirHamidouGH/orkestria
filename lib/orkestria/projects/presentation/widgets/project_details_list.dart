@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:orkestria/orkestria/projects/domain/entities/project.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants.dart';
+import '../../../dashboard/presentation/widgets/load_widget_logo.dart';
 
 // Service for fetching projects via API
 Future<List<Project>> fetchProjects() async {
@@ -83,7 +84,7 @@ class _ProjectDetailsListState extends State<ProjectDetailsList> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: LoaderWidget());
     }
 
     if (_errorMessage.isNotEmpty) {

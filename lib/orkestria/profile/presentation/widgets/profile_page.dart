@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:orkestria/core/constants.dart';
+import 'package:orkestria/orkestria/dashboard/presentation/widgets/load_widget_logo.dart';
 import 'package:orkestria/orkestria/profile/domain/entities/profil.dart';
 import 'package:orkestria/orkestria/profile/presentation/widgets/about_section.dart';
 import 'package:orkestria/orkestria/profile/presentation/widgets/contact_section.dart';
@@ -37,7 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _fetchProfile(); // Fetch profile data when the widget initializes
+    _fetchProfile();
   }
 
   Future<void> _fetchProfile() async {
@@ -98,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: stats(profile!),
                 ),
               ],
-            ):const Center(child: CircularProgressIndicator()),
+            ):const Center(child: LoaderWidget()),
           ),
           bottom: TabBar(
             tabs: tabs,
@@ -108,7 +109,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         body: profile == null
-            ? const Center(child: SizedBox()) // Show loading indicator while data is fetched
+            ? const Center(child: SizedBox())
             : TabBarView(
           children: [
             SingleChildScrollView(

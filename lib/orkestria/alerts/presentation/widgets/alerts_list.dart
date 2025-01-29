@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:orkestria/orkestria/alerts/domain/entities/alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants.dart';
+import '../../../dashboard/presentation/widgets/load_widget_logo.dart';
 
 class AlertsList extends StatefulWidget {
   const AlertsList({Key? key}) : super(key: key);
@@ -93,7 +94,7 @@ class _AlertsListState extends State<AlertsList> {
               future: _alertsFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: LoaderWidget());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -147,18 +148,26 @@ class _AlertsListState extends State<AlertsList> {
       cells: [
         DataCell(
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Column(children: [
+              const SizedBox(height: 8,),
               SvgPicture.asset(
                 color: Colors.grey,
-                "assets/icons/alert.svg", // Remplace avec un chemin par défaut si nécessaire
-                height: 18,
-                width: 18,
+                "assets/icons/alert.svg", // Replace with a default path if needed
+                height: 16,
+                width: 16,
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Text(
-                  (alert.message ?? '').split(' ').take(3).join(' '),
-                  style: const TextStyle(fontSize: 12),
+
+              ],),
+              const SizedBox(width: 8), // Add spacing between icon and text
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    (alert.message ?? ''),
+                    style: const TextStyle(fontSize: 12),
+                  ),
                 ),
               ),
             ],
@@ -181,4 +190,5 @@ class _AlertsListState extends State<AlertsList> {
       ],
     );
   }
+
 }

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:orkestria/main.dart';
+import 'package:orkestria/orkestria/dashboard/presentation/widgets/load_widget_row.dart';
 import 'package:orkestria/orkestria/profile/presentation/routes/profile_route.dart';
-import 'package:orkestria/orkestria/profile/presentation/screens/profile_screen.dart';
-import 'package:orkestria/orkestria/projects/presentation/project_provider/project_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants.dart';
 import '../../../../core/utils/responsive.dart';
@@ -24,9 +23,9 @@ class Header extends StatelessWidget {
             onPressed: context.read<MenuAppController>().controlMenu,
           ),
         if (!Responsive.isMobile(context))
-          Text(
-            "Dashboard",
-            style: Theme.of(context).textTheme.titleLarge,
+          const Text(
+            "Orkestria",
+            style: heading1,
           ),
         if (!Responsive.isMobile(context))
           Spacer(flex: Responsive.isDesktop(context) ? 2 : 1),
@@ -130,7 +129,8 @@ class _SearchFieldState extends State<SearchField> {
           borderRadius: BorderRadius.all(Radius.circular(10)),
         ),
         suffixIcon: InkWell(
-          onTap: () {},
+          onTap: () {
+          },
           child: Container(
             padding: const EdgeInsets.all(defaultPadding * 0.75),
             margin: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),

@@ -13,8 +13,8 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController(text: "abdelhak");
+  final TextEditingController passwordController = TextEditingController(text: "abdelhak123");
   bool isLoading = false;
   bool hidePasswod = true;
   String? errorMessage;

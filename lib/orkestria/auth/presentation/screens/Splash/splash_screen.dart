@@ -41,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Naviguer vers la page suivante après 2 secondes
     Timer(const Duration(seconds: 3), () {
-      GoRouter.of(context).push(loginRoutePath);
+      GoRouter.of(context).go(loginRoutePath);
     });
   }
 

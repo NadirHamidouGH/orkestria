@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:dio/dio.dart';
+import 'package:orkestria/orkestria/dashboard/presentation/widgets/load_widget_logo.dart';
 import 'package:orkestria/orkestria/recording/domain/entities/record.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants.dart';
 
 class RecordsList extends StatefulWidget {
-  const RecordsList({Key? key}) : super(key: key);
+  const RecordsList({super.key});
 
   @override
   _RecordsListState createState() => _RecordsListState();
@@ -97,7 +98,7 @@ class _RecordsListState extends State<RecordsList> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
                       child: Column(children: [
-                          CircularProgressIndicator(),
+                        LoaderWidget(),
                           Spacer()
                       ],)
 
@@ -137,12 +138,12 @@ class _RecordsListState extends State<RecordsList> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: Icon(Icons.arrow_back),
+                  icon: const Icon(Icons.arrow_back),
                   onPressed: _loadPreviousPage,
                   tooltip: 'Previous Page',
                 ),
                 IconButton(
-                  icon: Icon(Icons.arrow_forward),
+                  icon: const Icon(Icons.arrow_forward),
                   onPressed: _loadNextPage,
                   tooltip: 'Next Page',
                 ),
@@ -162,7 +163,7 @@ class _RecordsListState extends State<RecordsList> {
             children: [
               SvgPicture.asset(
                 color: Colors.grey,
-                'assets/icons/record.svg', // Replace with your actual path
+                'assets/icons/record.svg',
                 height: 18,
                 width: 18,
               ),
@@ -218,7 +219,7 @@ String truncateString(String inputString) {
 class ImageModal extends StatefulWidget {
   final String imageUrl;
 
-  const ImageModal({Key? key, required this.imageUrl}) : super(key: key);
+  const ImageModal({super.key, required this.imageUrl});
 
   @override
   State<ImageModal> createState() => _ImageModalState();
@@ -248,7 +249,7 @@ class _ImageModalState extends State<ImageModal> {
         width: 350,
         padding: const EdgeInsets.all(16.0),
         child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: LoaderWidget())
             : InteractiveViewer(
           maxScale: 4.0, // Adjust max zoom level as needed
           child: Image.network(
