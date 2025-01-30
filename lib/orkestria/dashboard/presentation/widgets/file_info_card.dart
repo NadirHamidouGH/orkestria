@@ -23,8 +23,8 @@ class FileInfoCard extends StatelessWidget {
       onTap: (){
         switch(info.title){
           case'Sites': GoRouter.of(context).push(projectsRoutePath);
-          case'Records': GoRouter.of(context).push(recordingRoutePath);
-          case'Boards': GoRouter.of(context).push(cameraKpiRoutePath);
+          case'Camera KPI': GoRouter.of(context).push(recordingRoutePath);
+          case'Cameras': GoRouter.of(context).push(cameraKpiRoutePath);
           case'Alerts': GoRouter.of(context).push(alertsRoutePath);
         }
       },
@@ -42,7 +42,7 @@ class FileInfoCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: EdgeInsets.all(defaultPadding * 0.75),
+                  padding: const EdgeInsets.all(defaultPadding * 0.75),
                   height: 40,
                   width: 40,
                   decoration: BoxDecoration(

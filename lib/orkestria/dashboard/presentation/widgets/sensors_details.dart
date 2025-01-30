@@ -17,7 +17,8 @@ class _SensorsDetailsState extends State<SensorsDetails> {
   late final GetDashboardStatsUseCase _getDashboardStatsUseCase;
   bool _isLoading = true;
   DashboardStats? _dashboardStats;
-  int totalSensors = 0;
+  int totalAlerts = 0;
+  Map<String, int>? alertsMap;
 
   @override
   void didChangeDependencies() {
@@ -33,27 +34,29 @@ class _SensorsDetailsState extends State<SensorsDetails> {
 
     try {
       final stats = await _getDashboardStatsUseCase();
-      var alertsBySensorType = stats.alertsBySensorType;
-      for(var alert in alertsBySensorType.values){
-            totalSensors += alert;
-      }
+      totalAlerts = stats.alertsBySensorType.fold<int>(0, (sum, alert) => sum + alert.alertCount);
+
       setState(() {
         _dashboardStats = stats;
+        alertsMap = _convertAlertsToMap(stats.alertsBySensorType);
         _isLoading = false;
       });
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-      // Handle error
       print('Error fetching stats: $e');
     }
+  }
+
+  Map<String, int> _convertAlertsToMap(List<AlertBySensorType> alerts) {
+    return {for (var sensor in alerts) sensor.sensorType: sensor.alertCount};
   }
 
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(child: SizedBox());
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (_dashboardStats == null) {
@@ -76,14 +79,15 @@ class _SensorsDetailsState extends State<SensorsDetails> {
             style: subtitle1,
           ),
           const SizedBox(height: defaultPadding),
-          Chart(alertsBySensorType),
+          if (alertsMap != null) Chart(alertsMap!),
+          const SizedBox(height: defaultPadding),
           if (alertsBySensorType != null) ...[
-            for (var sensorType in alertsBySensorType.entries)
+            for (var sensor in alertsBySensorType)
               StorageInfoCard(
                 svgSrc: "assets/icons/sensor.svg",
-                title: sensorType.key,
-                amountOfFiles: "${((sensorType.value/totalSensors) * 100).toStringAsFixed(2)}%",
-                numOfFiles: sensorType.value,
+                title: sensor.sensorType,
+                amountOfFiles: "${((sensor.alertCount / totalAlerts) * 100).toStringAsFixed(2)}%",
+                numOfFiles: sensor.alertCount,
               ),
           ],
         ],

@@ -1,41 +1,82 @@
 class DashboardStats {
-  final int sites;
-  final int cameraKpi;
-  final int bords;
-  final int alerts;
+  final int projects;
   final int zones;
-  final Map<String, int> alertsBySensorType;
+  final int cards;
+  final int sensors;
+  final int cameras;
+  final int alerts;
+  final int cameraKpi;
+  final List<AlertBySensorType> alertsBySensorType;
 
   DashboardStats({
-    required this.sites,
-    required this.cameraKpi,
-    required this.bords,
-    required this.alerts,
+    required this.projects,
     required this.zones,
+    required this.cards,
+    required this.sensors,
+    required this.cameras,
+    required this.alerts,
+    required this.cameraKpi,
     required this.alertsBySensorType,
   });
 
   // Factory constructor to create the entity from JSON
   factory DashboardStats.fromJson(Map<String, dynamic> json) {
+    var list = json['alerts_by_sensor_type'] as List;
+    List<AlertBySensorType> alertsList = list.map((i) => AlertBySensorType.fromJson(i)).toList();
+
     return DashboardStats(
-      sites: json['sites'] as int,
-      cameraKpi: json['camera_kpi'] as int,
-      bords: json['bords'] as int,
-      alerts: json['alerts'] as int,
+      projects: json['projects'] as int,
       zones: json['zones'] as int,
-      alertsBySensorType: Map<String, int>.from(json['alerts_by_sensor_type'] as Map),
+      cards: json['cards'] as int,
+      sensors: json['sensors'] as int,
+      cameras: json['cameras'] as int,
+      alerts: json['alerts'] as int,
+      cameraKpi: json['camera_kpi'] as int,
+      alertsBySensorType: alertsList,
     );
   }
 
   // Method to convert the entity to JSON
   Map<String, dynamic> toJson() {
     return {
-      'sites': sites,
-      'camera_kpi': cameraKpi,
-      'bords': bords,
-      'alerts': alerts,
+      'projects': projects,
       'zones': zones,
-      'alerts_by_sensor_type': alertsBySensorType,
+      'cards': cards,
+      'sensors': sensors,
+      'cameras': cameras,
+      'alerts': alerts,
+      'camera_kpi': cameraKpi,
+      'alerts_by_sensor_type': alertsBySensorType.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+
+class AlertBySensorType {
+  final int alertCount;
+  final String sensorId;
+  final String sensorType;
+
+  AlertBySensorType({
+    required this.alertCount,
+    required this.sensorId,
+    required this.sensorType,
+  });
+
+  // Factory constructor to create the object from JSON
+  factory AlertBySensorType.fromJson(Map<String, dynamic> json) {
+    return AlertBySensorType(
+      alertCount: json['alert_count'] as int,
+      sensorId: json['sensor_id'] as String,
+      sensorType: json['sensor_type'] as String,
+    );
+  }
+
+  // Method to convert the object to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'alert_count': alertCount,
+      'sensor_id': sensorId,
+      'sensor_type': sensorType,
     };
   }
 }

@@ -8,7 +8,7 @@ import 'package:orkestria/orkestria/projects/data/project_api_service.dart';
 import 'package:orkestria/orkestria/projects/data/project_repository_impl.dart';
 import 'package:orkestria/orkestria/projects/domain/usecases/fetch_project_usecase.dart';
 import 'package:provider/provider.dart';
-import 'package:orkestria/orkestria/dashboard/data/mock_dashboard_datasource.dart';
+import 'package:orkestria/orkestria/dashboard/data/dashboard_datasource.dart';
 import 'package:orkestria/orkestria/dashboard/domain/repositories/dashboard_repository.dart';
 import 'package:orkestria/orkestria/dashboard/domain/usecases/get_dashboard_stats_usecase.dart';
 

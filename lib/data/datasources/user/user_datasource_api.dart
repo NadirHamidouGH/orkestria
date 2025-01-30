@@ -40,6 +40,8 @@ class UserDataSourceApi implements UserDataSource {
         refreshToken = response.data['refresh_token'];
         sharedPreferences.setString('authToken', authToken.toString());
         sharedPreferences.setString('refresh_token', authToken.toString());
+        sharedPreferences.setString('username', username);
+        sharedPreferences.setString('password', password);
 
         return true;
       } else {

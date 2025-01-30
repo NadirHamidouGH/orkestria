@@ -2,6 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:orkestria/core/constants.dart';
+import 'package:orkestria/orkestria/dashboard/data/dashboard_datasource.dart';
+import 'package:orkestria/orkestria/dashboard/data/dashboard_service.dart';
+import 'package:orkestria/orkestria/dashboard/domain/entities/dashboard_stats.dart';
 import 'package:orkestria/orkestria/dashboard/presentation/widgets/load_widget_logo.dart';
 import 'package:orkestria/orkestria/profile/domain/entities/profil.dart';
 import 'package:orkestria/orkestria/profile/presentation/widgets/about_section.dart';
@@ -33,12 +36,18 @@ class _ProfilePageState extends State<ProfilePage> {
     ),
   ];
 
+  final DashboardService dashboardService =
+  DashboardService(dashboardDataSource: DashboardDataSourceApi());
+
+
   Profile? profile;
+  DashboardStats? dashboardStats;
 
   @override
   void initState() {
     super.initState();
     _fetchProfile();
+    _fetchDashboardData();
   }
 
   Future<void> _fetchProfile() async {
@@ -49,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (bearerToken != null) {
         final fetchedProfile = await fetchProfile(bearerToken);
         setState(() {
-          profile = fetchedProfile; // Save the fetched profile data
+          profile = fetchedProfile;
         });
       } else {
         print('Bearer token not found');
@@ -59,13 +68,27 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> _fetchDashboardData() async {
+    try {
+      final stats = await dashboardService.fetchDashboardData();
+      setState(() {
+        dashboardStats = stats;
+      });
+    } catch (error) {
+      print('Error fetching dashboard data: $error');
+    }
+  }
+
   Future<Profile> fetchProfile(String token) async {
-    const url = 'https://ms.camapp.dev.fortest.store/projects/keycloak/users/abdelhak';
+    final sharedPreferences = await SharedPreferences.getInstance();
+    final username = sharedPreferences.getString('username');
+    var url = 'https://ms.camapp.dev.fortest.store/projects/keycloak/users/$username';
     final headers = {
       'Authorization': 'Bearer $token',
     };
 
-    final response = await Dio().get(url, options: Options(headers: headers));
+    final response =
+    await Dio().get(url, options: Options(headers: headers));
     if (response.statusCode == 200) {
       return Profile.fromJson(response.data);
     } else {
@@ -96,7 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 hobbies(profile!),
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
-                  child: stats(profile!),
+                  child: stats(profile!,dashboardStats!),
                 ),
               ],
             ):const Center(child: LoaderWidget()),
@@ -125,14 +148,14 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Padding hobbies(Profile profile) {
-    return const Padding(
-      padding: EdgeInsets.only(
+    return Padding(
+      padding: const EdgeInsets.only(
         top: 5.0,
         bottom: 5.0,
       ),
       child: Text(
-        "CP Alger",
-        style: TextStyle(
+        profile.email,
+        style: const TextStyle(
           fontWeight: FontWeight.normal,
           fontSize: 14,
           color: Colors.grey,
@@ -145,7 +168,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Padding(
       padding: EdgeInsets.only(top: 8.0),
       child: Text(
-        "${profile.firstName} ${profile.lastName}",
+        profile.username,
         style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.bold,
@@ -154,55 +177,55 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Row stats(Profile profile) {
-    return const Row(
+  Row stats(Profile profile,DashboardStats stats) {
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Column(
           children: [
-            Text(
+            const Text(
               "Zones",
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text(
-              "3",
-              style: TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
+              stats.zones.toString(),
+              style: const TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
             ),
           ],
         ),
         Column(
           children: [
-            Text(
+            const Text(
               "Cameras",
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text(
-              "87",
-              style: TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
+              stats.cameras.toString(),
+              style: const TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
             ),
           ],
         ),
-        Column(
+         Column(
           children: [
-            Text(
+            const Text(
               "Sensors",
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text(
-              "150",
-              style: TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
+              stats.sensors.toString(),
+              style: const TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
             ),
           ],
         ),
@@ -222,9 +245,7 @@ class _ProfilePageState extends State<ProfilePage> {
       child: const CircleAvatar(
         radius: 50,
         backgroundColor: Colors.transparent,
-        backgroundImage: NetworkImage(
-          "https://picsum.photos/300/300",
-        ),
+        backgroundImage: NetworkImage("https://picsum.photos/300/300"),
       ),
     );
   }

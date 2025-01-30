@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:orkestria/orkestria/dashboard/data/dashboard_datasource.dart';
+import 'package:orkestria/orkestria/dashboard/data/dashboard_service.dart';
+import 'package:orkestria/orkestria/dashboard/data/my_files.dart';
 import 'package:orkestria/orkestria/dashboard/presentation/widgets/project_details.dart';
 import '../../../../core/constants.dart';
-import '../../data/my_files.dart';
 import '../../../../core/utils/responsive.dart';
 import 'file_info_card.dart';
 import 'load_widget_grid.dart';
@@ -57,10 +59,12 @@ class FileInfoCardGridView extends StatefulWidget {
 
 class _FileInfoCardGridViewState extends State<FileInfoCardGridView> {
   bool _isLoading = true;
+  late Future<List<CloudStorageInfo>> _dashboardDataFuture;
 
   @override
   void initState() {
     super.initState();
+    _dashboardDataFuture = DashboardService(dashboardDataSource: DashboardDataSourceApi()).fetchDashboardDataToWidget();
     _startLoading();
   }
 
@@ -81,17 +85,32 @@ class _FileInfoCardGridViewState extends State<FileInfoCardGridView> {
       );
     }
 
-    return GridView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: demoMyFiles.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: widget.crossAxisCount,
-        crossAxisSpacing: defaultPadding,
-        mainAxisSpacing: defaultPadding,
-        childAspectRatio: widget.childAspectRatio,
-      ),
-      itemBuilder: (context, index) => FileInfoCard(info: demoMyFiles[index]),
+    return FutureBuilder<List<CloudStorageInfo>>(
+      future: _dashboardDataFuture, // Call the service
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text("Error loading data"));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text("No data available"));
+        }
+
+        List<CloudStorageInfo> demoMyFiles = snapshot.data!;
+
+        return GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: demoMyFiles.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: widget.crossAxisCount,
+            crossAxisSpacing: defaultPadding,
+            mainAxisSpacing: defaultPadding,
+            childAspectRatio: widget.childAspectRatio,
+          ),
+          itemBuilder: (context, index) => FileInfoCard(info: demoMyFiles[index]),
+        );
+      },
     );
   }
 }
