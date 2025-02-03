@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import 'package:orkestria/core/constants.dart';
+import 'package:orkestria/main.dart';
 import 'package:orkestria/orkestria/alerts/presentation/screens/alerts_screen.dart';
 import 'package:orkestria/orkestria/auth/presentation/routes/login_route.dart';
 import 'package:orkestria/orkestria/camera%20kpi/presentation/screens/camera_kpi_screen.dart';
@@ -9,6 +10,7 @@ import 'package:orkestria/orkestria/profile/presentation/screens/profile_screen.
 import 'package:orkestria/orkestria/projects/presentation/routes/projects_route.dart';
 import 'package:orkestria/orkestria/recording/presentation/screens/recording_screen.dart';
 import 'package:orkestria/orkestria/settings/presentation/screens/settings_screen.dart';
+import 'package:provider/provider.dart';
 
 class SideMenu extends StatelessWidget {
   const SideMenu({
@@ -17,12 +19,15 @@ class SideMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return Drawer(
-      backgroundColor: bgColor,
+      backgroundColor: isDarkMode? bgColor : secondaryColorLight.withOpacity(0.95),
       child: ListView(
         children: [
           DrawerHeader(
-            child: Image.asset("assets/images/logo.png"),
+            child: isDarkMode ? Image.asset("assets/images/logo.png") : Image.asset("assets/images/logo_dark.png"),
           ),
           DrawerListTile(
             title: "Dashboard",
@@ -136,13 +141,16 @@ class DrawerListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return ListTile(
       onTap: press,
       horizontalTitleGap: 8.0,
-      leading: Icon(icon),
+      leading: Icon(icon, color : isDarkMode ? Colors.white : Colors.black54),
       title: Text(
         title,
-        style: subtitle2,
+        // style: subtitle2,
       ),
     );
   }

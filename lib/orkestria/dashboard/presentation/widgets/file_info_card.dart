@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:orkestria/main.dart';
 import 'package:orkestria/orkestria/alerts/presentation/routes/alerts_route.dart';
 import 'package:orkestria/orkestria/camera%20kpi/presentation/routes/camera_kpi_route.dart';
 import 'package:orkestria/orkestria/projects/presentation/routes/projects_route.dart';
 import 'package:orkestria/orkestria/recording/presentation/routes/recording_route.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../core/constants.dart';
 import '../../data/my_files.dart';
@@ -19,6 +21,9 @@ class FileInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return GestureDetector(
       onTap: (){
         switch(info.title){
@@ -30,9 +35,9 @@ class FileInfoCard extends StatelessWidget {
       },
       child: Container(
         padding: const EdgeInsets.all(defaultPadding),
-        decoration: const BoxDecoration(
-          color: secondaryColor,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+        decoration: BoxDecoration(
+          color: isDarkMode ? secondaryColor : secondaryColorLight,
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,14 +60,14 @@ class FileInfoCard extends StatelessWidget {
                         info.color ?? Colors.black, BlendMode.srcIn),
                   ),
                 ),
-                const Icon(Icons.more_vert, color: Colors.white54)
+                 Icon(Icons.more_vert, color: isDarkMode ? Colors.white54 : Colors.black54 )
               ],
             ),
             Text(
               info.title!,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: subtitle1Regular,
+              // style: subtitle1Regular,
             ),
             // ProgressLine(
             //   color: info.color,
@@ -73,17 +78,18 @@ class FileInfoCard extends StatelessWidget {
               children: [
                 Text(
                   "${info.numOfFiles}",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(color: Colors.white),
+                  style: TextStyle(fontSize: 12),
+                  // style: Theme.of(context)
+                  //     .textTheme
+                  //     .bodySmall!,
                 ),
                 Text(
                   info.totalStorage!,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall!
-                      .copyWith(color: Colors.white70),
+                  style: TextStyle(fontSize: 12),
+                  // style: Theme.of(context)
+                  //     .textTheme
+                  //     .bodySmall!
+                  //     .copyWith(color: Colors.white70),
                 ),
               ],
             )

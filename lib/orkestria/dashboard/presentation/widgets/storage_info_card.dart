@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/constants.dart';
 
 class StorageInfoCard extends StatelessWidget {
-  const StorageInfoCard({
+  StorageInfoCard({
     Key? key,
     required this.title,
     required this.svgSrc,
@@ -20,10 +20,11 @@ class StorageInfoCard extends StatelessWidget {
       margin: EdgeInsets.only(top: defaultPadding),
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
-        border: Border.all(width: 2, color: Colors.grey.withOpacity(0.15)),
+        border: Border.all(width: 2, color: Colors.grey.withOpacity(0.3)),
         borderRadius: const BorderRadius.all(
           Radius.circular(defaultPadding),
         ),
+          color: Colors.grey.withOpacity(0.2)
       ),
       child: Row(
         children: [
@@ -42,20 +43,23 @@ class StorageInfoCard extends StatelessWidget {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: subtitle1Regular,
+                    // style: subtitle1Regular,
                   ),
                   Text(
                     "$numOfFiles",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: Colors.white70),
+                    style: const TextStyle(fontSize: 12),
+                    // style: Theme.of(context)
+                    //     .textTheme
+                    //     .bodySmall!
+                    //     .copyWith(color: Colors.white70),
                   ),
                 ],
               ),
             ),
           ),
-          Text(amountOfFiles, style: bodyText2,)
+          Text(amountOfFiles,
+            // style: bodyText2,
+          )
         ],
       ),
     );

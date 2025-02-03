@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:dio/dio.dart';
+import 'package:orkestria/main.dart';
 import 'package:orkestria/orkestria/camera%20kpi/domain/entities/camera.dart';
+import 'package:orkestria/orkestria/camera%20kpi/presentation/screens/camera_live_view.dart';
 import 'package:orkestria/orkestria/dashboard/presentation/widgets/load_widget_logo.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants.dart';
 
@@ -75,18 +78,22 @@ class _CameraListState extends State<CameraList> {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return Container(
       padding: const EdgeInsets.all(paddingHalf),
-      decoration: const BoxDecoration(
-        color: secondaryColor,
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+      decoration: BoxDecoration(
+        color: isDarkMode ? secondaryColor : secondaryColorLight,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             "Cameras",
-            style: heading2,
+            style: TextStyle(fontSize: 24),
+            // style: heading2,
           ),
           FutureBuilder<List<Camera>>(
             future: _camerasFuture,
@@ -171,9 +178,19 @@ class _CameraListState extends State<CameraList> {
           ),
         ),
         DataCell(
-          Text(
-            camera.status,
-            style: const TextStyle(fontSize: 12),
+          GestureDetector(
+            onTap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CameraLiveView(videoUrl: 'https://file-examples.com/storage/fed070a54267a0d1f9ebf9a/2017/04/file_example_MP4_480_1_5MG.mp4' , cameraName: camera.name,),
+                ),
+              );
+            },
+            child: Text(
+              camera.status ,
+              style: TextStyle(fontSize: 12 , fontWeight: FontWeight.w700 ,color: camera.status.toString() == "online" ? Colors.green: Colors.black87),
+            ),
           ),
         ),
       ],

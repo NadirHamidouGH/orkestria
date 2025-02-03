@@ -43,6 +43,9 @@ class ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return GestureDetector(
       onTap: (){
         GoRouter.of(context).push(profileRoutePath);
@@ -54,14 +57,18 @@ class ProfileCard extends StatelessWidget {
           vertical: defaultPadding / 2,
         ),
         decoration: BoxDecoration(
-          color: secondaryColor,
+          color: isDarkMode ? secondaryColor:secondaryColorLight,
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           border: Border.all(color: Colors.white10),
         ),
         child: Row(
           children: [
-            Image.asset(
+            isDarkMode ? Image.asset(
               "assets/images/profile-user.png",
+              height: 24,
+            ):
+            Image.asset(
+              "assets/images/profile-user-dark.png",
               height: 24,
             ),
             if (!Responsive.isMobile(context))
@@ -117,12 +124,15 @@ class _SearchFieldState extends State<SearchField> {
       FocusScope.of(context).requestFocus(FocusNode()); // Unfocus all TextFields
     });
 
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return TextField(
       focusNode: _focusNode,  // Assign the FocusNode to the TextField
       autofocus: false,  // Ensure autofocus is false
       decoration: InputDecoration(
         hintText: "Search",
-        fillColor: secondaryColor,
+        fillColor: isDarkMode ? secondaryColor : secondaryColorLight,
         filled: true,
         border: const OutlineInputBorder(
           borderSide: BorderSide.none,
@@ -134,8 +144,8 @@ class _SearchFieldState extends State<SearchField> {
           child: Container(
             padding: const EdgeInsets.all(defaultPadding * 0.75),
             margin: const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-            decoration: const BoxDecoration(
-              color: Colors.grey,
+            decoration: BoxDecoration(
+              color: isDarkMode ? Colors.grey.withOpacity(0.1) : Colors.grey.shade400,
               borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
             child: SvgPicture.asset("assets/icons/Search.svg"),

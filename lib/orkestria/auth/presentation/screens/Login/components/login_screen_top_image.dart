@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:orkestria/main.dart';
+import 'package:provider/provider.dart';
 
 
 class LoginScreenTopImage extends StatelessWidget {
@@ -8,9 +10,12 @@ class LoginScreenTopImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return Column(
       children: [
-        Image.asset("assets/images/logo.png",height: 150,),
+        isDarkMode ? Image.asset("assets/images/logo.png",height: 150,):Image.asset("assets/images/logo_dark.png",height: 150,),
         Row(
           children: [
             // const Spacer(),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:dio/dio.dart';
+import 'package:orkestria/main.dart';
 import 'package:orkestria/orkestria/alerts/domain/entities/alert.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants.dart';
 import '../../../dashboard/presentation/widgets/load_widget_logo.dart';
@@ -75,10 +77,13 @@ class _AlertsListState extends State<AlertsList> {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return Container(
       padding: const EdgeInsets.all(paddingHalf),
-      decoration: const BoxDecoration(
-        color: secondaryColor,
+      decoration: BoxDecoration(
+        color: isDarkMode ? secondaryColor : secondaryColorLight,
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
       child: SingleChildScrollView(
@@ -88,7 +93,8 @@ class _AlertsListState extends State<AlertsList> {
           children: [
             const Text(
               "Alerts",
-              style: heading2,
+              style: TextStyle(fontSize: 24),
+              // style: heading2,
             ),
             FutureBuilder<List<Alert>>(
               future: _alertsFuture,

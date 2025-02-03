@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:orkestria/core/constants.dart';
+import 'package:orkestria/main.dart';
 import 'package:orkestria/orkestria/dashboard/data/dashboard_datasource.dart';
 import 'package:orkestria/orkestria/dashboard/data/dashboard_service.dart';
 import 'package:orkestria/orkestria/dashboard/domain/entities/dashboard_stats.dart';
@@ -9,6 +10,7 @@ import 'package:orkestria/orkestria/dashboard/presentation/widgets/load_widget_l
 import 'package:orkestria/orkestria/profile/domain/entities/profil.dart';
 import 'package:orkestria/orkestria/profile/presentation/widgets/about_section.dart';
 import 'package:orkestria/orkestria/profile/presentation/widgets/contact_section.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -20,18 +22,18 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   List<Tab> tabs = [
-    const Tab(
+     Tab(
       text: "Profile",
       icon: Icon(
         LucideIcons.user,
-        color: Colors.white,
+        // color: Colors.white,
       ),
     ),
-    const Tab(
+     Tab(
       text: "Info",
       icon: Icon(
         LucideIcons.info,
-        color: Colors.white,
+        // color: Colors.white,
       ),
     ),
   ];
@@ -98,15 +100,19 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
         appBar: AppBar(
           elevation: 2,
           automaticallyImplyLeading: false,
-          backgroundColor: bgColor,
+          backgroundColor: isDarkMode ? bgColor : bgColor.withOpacity(0.4),
           titleTextStyle: const TextStyle(
-            color: Colors.white,
+            // color: Colors.white,// example 1
+            // fontWeight: FontWeight.w700,
           ),
           toolbarHeight: 180,
           title: Padding(
@@ -126,9 +132,9 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           bottom: TabBar(
             tabs: tabs,
-            indicatorColor: Colors.white,
+            indicatorColor: isDarkMode ? Colors.white : Colors.black87,
             indicatorSize: TabBarIndicatorSize.tab,
-            labelColor: Colors.white,
+            labelColor: isDarkMode ? Colors.white : Colors.black87,
           ),
         ),
         body: profile == null
@@ -155,11 +161,11 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       child: Text(
         profile.email,
-        style: const TextStyle(
-          fontWeight: FontWeight.normal,
-          fontSize: 14,
-          color: Colors.grey,
-        ),
+        // style: const TextStyle(
+        //   fontWeight: FontWeight.normal,
+        //   fontSize: 14,
+        //   color: Colors.grey,
+        // ),
       ),
     );
   }
@@ -169,10 +175,6 @@ class _ProfilePageState extends State<ProfilePage> {
       padding: EdgeInsets.only(top: 8.0),
       child: Text(
         profile.username,
-        style: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.bold,
-        ),
       ),
     );
   }
@@ -185,15 +187,16 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             const Text(
               "Zones",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+              // style: TextStyle(
+              //   color: Colors.white,
+              //   fontWeight: FontWeight.bold,),
             ),
             const SizedBox(height: 8.0),
             Text(
               stats.zones.toString(),
-              style: const TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
+              // style: const TextStyle(
+              // fontWeight: FontWeight.normal,
+              // color: Colors.grey),
             ),
           ],
         ),
@@ -201,15 +204,13 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             const Text(
               "Cameras",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+              // style: TextStyle(
+              //   color: Colors.white,
+              //   fontWeight: FontWeight.bold,),
             ),
             const SizedBox(height: 8.0),
             Text(
               stats.cameras.toString(),
-              style: const TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
             ),
           ],
         ),
@@ -217,15 +218,15 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             const Text(
               "Sensors",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+              // style: TextStyle(
+              //   color: Colors.white,
+              //   fontWeight: FontWeight.bold,
+              // ),
             ),
             const SizedBox(height: 8.0),
             Text(
               stats.sensors.toString(),
-              style: const TextStyle(fontWeight: FontWeight.normal, color: Colors.grey),
+              style: const TextStyle(fontWeight: FontWeight.normal),
             ),
           ],
         ),

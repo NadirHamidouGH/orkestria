@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dio/dio.dart';
+import 'package:orkestria/main.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orkestria/orkestria/alerts/domain/entities/alert.dart';
 import '../../../../core/constants.dart';
@@ -56,6 +58,9 @@ class _RecentFilesState extends State<RecentFiles> {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return FutureBuilder<List<Alert>>(
       future: _recentFilesFuture,
       builder: (context, snapshot) {
@@ -69,8 +74,8 @@ class _RecentFilesState extends State<RecentFiles> {
           List<Alert> recentFiles = snapshot.data!;
           return Container(
             padding: const EdgeInsets.all(paddingHalf),
-            decoration: const BoxDecoration(
-              color: secondaryColor,
+            decoration: BoxDecoration(
+              color: isDarkMode ? secondaryColor : secondaryColorLight,
               borderRadius: BorderRadius.all(Radius.circular(10)),
             ),
             child: Column(
@@ -78,7 +83,8 @@ class _RecentFilesState extends State<RecentFiles> {
               children: [
                 const Text(
                   "Notifications",
-                  style: subtitle1,
+                  // style: subtitle1,
+                  style: TextStyle(fontSize: 18),
                 ),
                 SizedBox(
                   width: double.infinity,
@@ -88,19 +94,19 @@ class _RecentFilesState extends State<RecentFiles> {
                       DataColumn(
                         label: Text(
                           "Event",
-                          style: subtitle1Regular,
+                          // style: subtitle1Regular,
                         ),
                       ),
                       DataColumn(
                         label: Text(
                           "Date",
-                          style: subtitle1Regular,
+                          // style: subtitle1Regular,
                         ),
                       ),
                       DataColumn(
                         label: Text(
                           "Time",
-                          style: subtitle1Regular,
+                          // style: subtitle1Regular,
                         ),
                       ),
                     ],
@@ -125,16 +131,17 @@ class _RecentFilesState extends State<RecentFiles> {
           Row(
             children: [
               SvgPicture.asset(
-                color: Colors.grey,
+                color: const Color(0xFFAB4545).withOpacity(0.8),
                 "assets/icons/alert.svg", // You can replace with the appropriate icon for the recent files
-                height: 18,
-                width: 18,
+                height: 14,
+                width: 14,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 4),
                 child: Text(
                   alert.message?.split(' ').take(3).join(' ') ?? '',
-                  style: bodyText2,
+                  // style: bodyText2,
+                  style: TextStyle(fontSize: 12),
                 ),
               ),
             ],
@@ -145,7 +152,8 @@ class _RecentFilesState extends State<RecentFiles> {
             alert.createdAt.length > 10
                 ? alert.createdAt.substring(0, 10)
                 : alert.createdAt,
-            style: bodyText2,
+            // style: bodyText2,
+            style: TextStyle(fontSize: 12),
           ),
         ),
         DataCell(
@@ -153,7 +161,8 @@ class _RecentFilesState extends State<RecentFiles> {
             alert.createdAt.length > 10
                 ? alert.createdAt.substring(11,16) // Extract the time from the timestamp
                 : '',
-            style: bodyText2,
+            // style: bodyText2,
+            style: TextStyle(fontSize: 12),
           ),
         ),
       ],

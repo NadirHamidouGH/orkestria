@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../core/utils/colors.dart';
+import 'package:orkestria/core/utils/colors.dart';
+import 'package:orkestria/main.dart';
+import 'package:provider/provider.dart';
+
 
 class LoadingRowDashboard extends StatefulWidget {
   @override
@@ -62,12 +65,15 @@ class AnimatedGradientBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return AnimatedBuilder(
       animation: animation,
       builder: (context, child) {
         return ShaderMask(
           shaderCallback: (bounds) {
-            return LinearGradient(
+             return isDarkMode ? LinearGradient(
               colors: const [
                 secondaryColor,
                 kPrimaryColor,
@@ -76,7 +82,17 @@ class AnimatedGradientBox extends StatelessWidget {
               stops: const [0.0, 0.5, 1.0],
               begin: Alignment(-3.0 + 1.0 * animation.value, 0.0),
               end: Alignment(1.0 + 3.0 * animation.value, 0.0),
-            ).createShader(bounds);
+            ).createShader(bounds):
+                                LinearGradient(
+               colors: const [
+                 secondaryColorLight,
+                 kPrimaryColorLight,
+                 secondaryColorLight,
+               ],
+               stops: const [0.0, 0.5, 1.0],
+               begin: Alignment(-3.0 + 1.0 * animation.value, 0.0),
+               end: Alignment(1.0 + 3.0 * animation.value, 0.0),
+             ).createShader(bounds);
           },
           blendMode: BlendMode.srcIn,
           child: Container(

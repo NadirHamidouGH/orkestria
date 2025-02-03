@@ -21,7 +21,8 @@ class MyFiles extends StatelessWidget {
           children: [
             Text(
               "My Sites",
-              style: subtitle1,
+              style: TextStyle(fontSize: 20),
+              // style: subtitle1,
             ),
           ],
         ),

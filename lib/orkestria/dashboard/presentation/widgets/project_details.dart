@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:dio/dio.dart';
+import 'package:orkestria/main.dart';
 import 'package:orkestria/orkestria/projects/domain/entities/project.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants.dart';
 import 'load_widget_row.dart';
@@ -93,12 +95,14 @@ class _DynamicProjectListState extends State<DynamicProjectList> {
     if (_errorMessage.isNotEmpty) {
       return Center(child: Text(_errorMessage));
     }
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
 
     return Container(
       padding: const EdgeInsets.all(defaultPadding),
-      decoration: const BoxDecoration(
-        color: secondaryColor,
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+      decoration: BoxDecoration(
+        color: isDarkMode ? secondaryColor : secondaryColorLight,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,11 +155,14 @@ class ProjectDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return Container(
       width: 200,
       padding: const EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.1),
+        color: isDarkMode ? Colors.grey.withOpacity(0.1):Colors.grey.shade400.withOpacity(0.9),
         border: Border.all(
           color: Colors.grey,
           width: 1,
@@ -188,7 +195,7 @@ class ProjectDetails extends StatelessWidget {
                   Icon(
                     data["icon"] as IconData,
                     size: 30,
-                    color: Colors.grey,
+                    color: const Color(0xFFAB4545).withOpacity(0.8) ,
                   ),
                   const SizedBox(height: 4),
                   Text(

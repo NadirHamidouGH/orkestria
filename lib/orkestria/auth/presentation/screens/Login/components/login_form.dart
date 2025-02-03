@@ -106,7 +106,7 @@ class _LoginFormState extends State<LoginForm> {
                 child: CircularProgressIndicator(color: kPrimaryColor))
                 : Text(
               "Login".toUpperCase(),
-              style: const TextStyle(color: Colors.white),
+              // style: const TextStyle(color: Colors.white),
             ),
           ),
            (errorMessage != null)?

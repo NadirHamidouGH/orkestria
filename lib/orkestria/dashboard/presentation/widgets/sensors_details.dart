@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:orkestria/main.dart';
 import 'package:orkestria/orkestria/dashboard/domain/usecases/get_dashboard_stats_usecase.dart';
 import 'package:orkestria/orkestria/dashboard/domain/entities/dashboard_stats.dart';
 import 'package:provider/provider.dart';
@@ -55,43 +56,36 @@ class _SensorsDetailsState extends State<SensorsDetails> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    return Consumer<ThemeController>(
+      builder: (context, themeController, child) {
+        final isDarkMode = themeController.isDarkMode;
 
-    if (_dashboardStats == null) {
-      return const Center(child: Text("No data available"));
-    }
-
-    final alertsBySensorType = _dashboardStats?.alertsBySensorType;
-
-    return Container(
-      padding: const EdgeInsets.all(defaultPadding),
-      decoration: const BoxDecoration(
-        color: secondaryColor,
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Alerts by type",
-            style: subtitle1,
+        return Container(
+          padding: const EdgeInsets.all(defaultPadding),
+          decoration: BoxDecoration(
+            color: isDarkMode ? secondaryColor : secondaryColorLight,
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
           ),
-          const SizedBox(height: defaultPadding),
-          if (alertsMap != null) Chart(alertsMap!),
-          const SizedBox(height: defaultPadding),
-          if (alertsBySensorType != null) ...[
-            for (var sensor in alertsBySensorType)
-              StorageInfoCard(
-                svgSrc: "assets/icons/sensor.svg",
-                title: sensor.sensorType,
-                amountOfFiles: "${((sensor.alertCount / totalAlerts) * 100).toStringAsFixed(2)}%",
-                numOfFiles: sensor.alertCount,
-              ),
-          ],
-        ],
-      ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+               const Text("Alerts by type", style: TextStyle(fontSize: 20),),
+              const SizedBox(height: defaultPadding),
+              if (alertsMap != null) Chart(alertsMap!),
+              const SizedBox(height: defaultPadding),
+              if (_dashboardStats?.alertsBySensorType != null) ...[
+                for (var sensor in _dashboardStats!.alertsBySensorType)
+                  StorageInfoCard(
+                    svgSrc: "assets/icons/sensor.svg",
+                    title: sensor.sensorType,
+                    amountOfFiles: "${((sensor.alertCount / totalAlerts) * 100).toStringAsFixed(2)}%",
+                    numOfFiles: sensor.alertCount,
+                  ),
+              ],
+            ],
+          ),
+        );
+      },
     );
   }
 }

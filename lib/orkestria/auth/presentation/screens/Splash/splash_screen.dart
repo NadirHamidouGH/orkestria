@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:orkestria/main.dart';
 import 'package:orkestria/orkestria/auth/presentation/routes/login_route.dart';
 import 'dart:async';
+
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -53,6 +56,9 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return Scaffold(
       body: Center(
         child: AnimatedBuilder(
@@ -70,8 +76,8 @@ class _SplashScreenState extends State<SplashScreen>
               ),
             );
           },
-          child: Image.asset(
-            'assets/images/logo_splash.png',
+          child:  Image.asset(
+            isDarkMode? 'assets/images/logo_splash.png':'assets/images/logo_splash_dark.png',
           ),
         ),
       ),

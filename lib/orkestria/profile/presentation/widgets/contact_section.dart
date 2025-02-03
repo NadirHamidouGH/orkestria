@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:orkestria/main.dart';
 import 'package:orkestria/orkestria/profile/domain/entities/profil.dart';
-
+import 'package:provider/provider.dart';
 import '../../../../core/utils/colors.dart';
 
 class ContactSection extends StatelessWidget {
@@ -10,9 +11,12 @@ class ContactSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return Card(
-      color: secondaryColor,
-      margin: EdgeInsets.all(16),
+      color:  isDarkMode ? secondaryColor:secondaryColorLight,
+      margin: const EdgeInsets.all(16),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -20,7 +24,7 @@ class ContactSection extends StatelessWidget {
           children: [
             Text(
               '${profile.firstName} ${profile.lastName}',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, ),
             ),
 
             const SizedBox(height: 8),

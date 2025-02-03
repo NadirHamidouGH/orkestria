@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:dio/dio.dart';
+import 'package:orkestria/main.dart';
 import 'package:orkestria/orkestria/dashboard/presentation/widgets/load_widget_logo.dart';
 import 'package:orkestria/orkestria/recording/domain/entities/record.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants.dart';
 
@@ -77,10 +79,13 @@ class _RecordsListState extends State<RecordsList> {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return Container(
       padding: const EdgeInsets.all(paddingHalf),
-      decoration: const BoxDecoration(
-        color: secondaryColor,
+      decoration: BoxDecoration(
+        color: isDarkMode ? secondaryColor : secondaryColorLight,
         borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
       child: SingleChildScrollView(
@@ -90,7 +95,8 @@ class _RecordsListState extends State<RecordsList> {
           children: [
             const Text(
               "Camera KPI",
-              style: heading2,
+              style: TextStyle(fontSize: 24),
+              // style: heading2,
             ),
             FutureBuilder<List<Records>>(
               future: _recordsFuture,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:orkestria/core/constants.dart';
+import 'package:orkestria/main.dart';
+import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -10,12 +12,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool isDarkMode = false;
   bool isNotificationsEnabled = true;
   String selectedLanguage = "English";
-  String selectedZone = "Zone 1";
+  String selectedZone = "El harach";
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: isDarkMode? bgColor : bgColorLight,
       body: Container(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -27,7 +31,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const Padding(
               padding: EdgeInsets.only(left: 8.0),
               child: Text("Settings",
-                style: heading2),
+                style: TextStyle(fontSize: 24)
+                // style: heading2
+              ),
             ),
             SettingsCard(
               child: Column(
@@ -37,7 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     title: "Language",
                     trailing: DropdownButton<String>(
                       value: selectedLanguage,
-                      items: const [
+                      items: [
                         DropdownMenuItem(
                           value: "English",
                           child: Text("English"),
@@ -59,14 +65,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     title: "Zone",
                     trailing: DropdownButton<String>(
                       value: selectedZone,
-                      items: const [
+                      items: [
                         DropdownMenuItem(
-                          value: "Zone 1",
-                          child: Text("Zone 1"),
+                          value: "El harach",
+                          child: Text("El harach"),
                         ),
                         DropdownMenuItem(
-                          value: "Zone 2",
-                          child: Text("Zone 2"),
+                          value: "Bab Ezzouar",
+                          child: Text("Bab Ezzouar"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Dar elbaida",
+                          child: Text("Dar elbaida"),
                         ),
                       ],
                       onChanged: (value) {
@@ -82,9 +92,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     trailing: Switch(
                       value: isDarkMode,
                       onChanged: (value) {
-                        setState(() {
-                          isDarkMode = value;
-                        });
+                        themeController.toggleTheme();
                       },
                     ),
                   ),
@@ -108,19 +116,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SettingsTile(
+                   SettingsTile(
                     title: "Phone",
                     trailing: Text("+123456789"),
                   ),
                   const Divider(height: 1,color: Colors.white10,),
-                  const SettingsTile(
+                  SettingsTile(
                     title: "Email",
                     trailing: Text("example@mail.com"),
                   ),
                   const Divider(height: 1,color: Colors.white10,),
                   SettingsTile(
                     title: "Role",
-                    trailing: Text("Supervisor"),
+                    trailing: Text("Admin"),
                     onTap: () {
                       // Handle sign out
                     },
@@ -129,13 +137,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            const SettingsCard(
+            SettingsCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SettingsTile(
                     title: "Site",
-                    trailing: Text("CP ALGER"),
+                    trailing: Text("El harach"),
                   ),
                   Divider(height: 1,color: Colors.white10,),
                   SettingsTile(
@@ -162,8 +170,11 @@ class SettingsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
+
     return Card(
-      color: secondaryColor,
+      color: isDarkMode ? secondaryColor : secondaryColorLight,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -193,13 +204,13 @@ class SettingsTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: EdgeInsets.symmetric(vertical: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               title,
-              style: const TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 16),
             ),
             trailing,
           ],
