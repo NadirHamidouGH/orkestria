@@ -100,12 +100,7 @@ class _CameraListState extends State<CameraList> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
-                  // child: Column(
-                  //   children: [
                   child: LoaderWidget(),
-                      // Spacer()
-                  //   ],
-                  // ),
                 );
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
@@ -157,7 +152,7 @@ class _CameraListState extends State<CameraList> {
             children: [
               SvgPicture.asset(
                 color: Colors.grey,
-                'assets/icons/camera.svg', // Replace with your actual path
+                'assets/icons/camera.svg',
                 height: 18,
                 width: 18,
               ),
@@ -187,9 +182,22 @@ class _CameraListState extends State<CameraList> {
                 ),
               );
             },
-            child: Text(
-              camera.status ,
-              style: TextStyle(fontSize: 12 , fontWeight: FontWeight.w700 ,color: camera.status.toString() == "online" ? Colors.green: Colors.black87),
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  color: Colors.green.shade400,
+                  'assets/icons/play.svg',
+                  height: 14,
+                  width: 14,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    camera.status,
+                    style: TextStyle(fontSize: 14, color: Colors.green.shade400 , fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

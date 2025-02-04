@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:orkestria/main.dart';
 import 'package:orkestria/orkestria/main/presentation/routes/main_route.dart';
 import 'package:provider/provider.dart';
 import 'package:orkestria/domain/usecases/authenticate_usecase.dart';
@@ -59,6 +60,9 @@ class _LoginFormState extends State<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+
+    final themeController = Provider.of<ThemeController>(context);
+    final isDarkMode = themeController.isDarkMode;
     return Form(
       child: Column(
         children: [
@@ -98,6 +102,7 @@ class _LoginFormState extends State<LoginForm> {
           ),
           const SizedBox(height: defaultPadding),
           ElevatedButton(
+            // style: ButtonStyle(backgroundColor: gre),
             onPressed: isLoading ? null : _login,  // Disable button when loading
             child: isLoading
                 ? const SizedBox(
@@ -105,6 +110,9 @@ class _LoginFormState extends State<LoginForm> {
                 width: 30,
                 child: CircularProgressIndicator(color: kPrimaryColor))
                 : Text(
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                  color: isDarkMode ? Colors.white : Colors.black87),
               "Login".toUpperCase(),
               // style: const TextStyle(color: Colors.white),
             ),

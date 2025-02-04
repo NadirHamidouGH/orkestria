@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:orkestria/main.dart';
-import 'package:orkestria/orkestria/dashboard/presentation/widgets/load_widget_row.dart';
 import 'package:orkestria/orkestria/profile/presentation/routes/profile_route.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants.dart';
@@ -75,7 +74,7 @@ class ProfileCard extends StatelessWidget {
               const Padding(
                 padding:
                 EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-                child: Text("nadir hamidou"),
+                child: Text("abdelhak sifi"),
               ),
             const Icon(Icons.keyboard_arrow_down),
           ],
@@ -119,17 +118,16 @@ class _SearchFieldState extends State<SearchField> {
 
   @override
   Widget build(BuildContext context) {
-    // Unfocus the TextField when the screen comes back into focus
     Future.microtask(() {
-      FocusScope.of(context).requestFocus(FocusNode()); // Unfocus all TextFields
+      FocusScope.of(context).requestFocus(FocusNode());
     });
 
     final themeController = Provider.of<ThemeController>(context);
     final isDarkMode = themeController.isDarkMode;
 
     return TextField(
-      focusNode: _focusNode,  // Assign the FocusNode to the TextField
-      autofocus: false,  // Ensure autofocus is false
+      focusNode: _focusNode,
+      autofocus: false,
       decoration: InputDecoration(
         hintText: "Search",
         fillColor: isDarkMode ? secondaryColor : secondaryColorLight,
