@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import 'package:orkestria/core/constants.dart';
-import 'package:orkestria/main.dart';
-import 'package:orkestria/orkestria/alerts/presentation/screens/alerts_screen.dart';
+import 'package:orkestria/main.dart'; // NOTE: Consider injecting ThemeController via Provider.
+import 'package:orkestria/orkestria/alerts/presentation/routes/alerts_route.dart'; // Use route paths.
 import 'package:orkestria/orkestria/auth/presentation/routes/login_route.dart';
-import 'package:orkestria/orkestria/camera%20kpi/presentation/screens/camera_kpi_screen.dart';
-import 'package:orkestria/orkestria/profile/presentation/screens/profile_screen.dart';
+import 'package:orkestria/orkestria/camera%20kpi/presentation/routes/camera_kpi_route.dart'; // Use route paths.
+import 'package:orkestria/orkestria/profile/presentation/routes/profile_route.dart'; // Use route paths.
 import 'package:orkestria/orkestria/projects/presentation/routes/projects_route.dart';
-import 'package:orkestria/orkestria/recording/presentation/screens/recording_screen.dart';
-import 'package:orkestria/orkestria/settings/presentation/screens/settings_screen.dart';
+import 'package:orkestria/orkestria/recording/presentation/routes/recording_route.dart'; // Use route paths.
+import 'package:orkestria/orkestria/settings/presentation/routes/settings_route.dart'; // Use route paths.
 import 'package:provider/provider.dart';
 
+/// Side menu/drawer for navigation.
 class SideMenu extends StatelessWidget {
   const SideMenu({
     Key? key,
@@ -19,105 +20,72 @@ class SideMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeController = Provider.of<ThemeController>(context);
+    final themeController = Provider.of<ThemeController>(context); // Access ThemeController.
     final isDarkMode = themeController.isDarkMode;
 
-    return Drawer(
-      backgroundColor: isDarkMode? bgColor : secondaryColorLight.withOpacity(0.95),
+    return Drawer( // Use a Drawer widget.
+      backgroundColor: isDarkMode ? bgColor : secondaryColorLight.withOpacity(0.95), // Dynamic background color.
       child: ListView(
         children: [
-          DrawerHeader(
-            child: isDarkMode ? Image.asset("assets/images/logo.png") : Image.asset("assets/images/logo_dark.png"),
+          DrawerHeader( // Header section of the drawer.
+            child: isDarkMode // Dynamic logo.
+                ? Image.asset("assets/images/logo.png")
+                : Image.asset("assets/images/logo_dark.png"),
           ),
-          DrawerListTile(
+          DrawerListTile( // Dashboard link.
             title: "Dashboard",
             icon: LucideIcons.layout_dashboard,
             press: () {
-              Navigator.pop(context);
+              Navigator.pop(context); // Close the drawer.
             },
           ),
-          DrawerListTile(
+          DrawerListTile( // Sites link.
             title: "Sites",
             icon: LucideIcons.factory,
             press: () {
-              GoRouter.of(context).push(projectsRoutePath);
+              GoRouter.of(context).push(projectsRoutePath); // Navigate using GoRouter.
             },
           ),
-          DrawerListTile(
+          DrawerListTile( // Alerts link.
             title: "Alerts",
             icon: LucideIcons.triangle_alert,
             press: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const AlertsScreen();
-                  },
-                ),
-              );
+              GoRouter.of(context).push(alertsRoutePath); // Navigate using GoRouter.
             },
           ),
-          DrawerListTile(
+          DrawerListTile( // Camera KPI link.
             title: "Camera KPI",
             icon: LucideIcons.file_video_2,
             press: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const RecordingScreen();
-                  },
-                ),
-              );
+              GoRouter.of(context).push(recordingRoutePath); // Navigate using GoRouter.
             },
           ),
-          DrawerListTile(
+          DrawerListTile( // Cameras link.
             title: "Cameras",
             icon: LucideIcons.scan_eye,
             press: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const CameraKpiScreen();
-                  },
-                ),
-              );
+              GoRouter.of(context).push(cameraKpiRoutePath); // Navigate using GoRouter.
             },
           ),
-          DrawerListTile(
+          DrawerListTile( // Profile link.
             title: "Profile",
             icon: LucideIcons.user,
             press: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const ProfileScreen();
-                  },
-                ),
-              );
+              GoRouter.of(context).push(profileRoutePath); // Navigate using GoRouter.
             },
           ),
-          DrawerListTile(
+          DrawerListTile( // Settings link.
             title: "Settings",
             icon: LucideIcons.settings,
             press: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return SettingsScreen();
-                  },
-                ),
-              );
+              GoRouter.of(context).push(settingsRoutePath); // Navigate using GoRouter.
             },
           ),
-          DrawerListTile(
+          DrawerListTile( // Sign out link.
             title: "Sign Out",
             icon: LucideIcons.log_out,
             press: () {
-              GoRouter.of(context).go(loginRoutePath);
+              GoRouter.of(context).go(loginRoutePath); // Navigate using GoRouter.
             },
           ),
         ],
@@ -126,13 +94,13 @@ class SideMenu extends StatelessWidget {
   }
 }
 
+/// A tile in the drawer list.
 class DrawerListTile extends StatelessWidget {
   const DrawerListTile({
     Key? key,
-    // For selecting those three line once press "Command+D"
-    required this.title,
-    required this.icon,
-    required this.press,
+    required this.title, // Title text.
+    required this.icon, // Icon.
+    required this.press, // Callback function.
   }) : super(key: key);
 
   final String title;
@@ -141,16 +109,15 @@ class DrawerListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeController = Provider.of<ThemeController>(context);
+    final themeController = Provider.of<ThemeController>(context); // Access ThemeController.
     final isDarkMode = themeController.isDarkMode;
 
-    return ListTile(
-      onTap: press,
+    return ListTile( // Use a ListTile widget.
+      onTap: press, // Call the callback on tap.
       horizontalTitleGap: 8.0,
-      leading: Icon(icon, color : isDarkMode ? Colors.white : Colors.black54),
+      leading: Icon(icon, color: isDarkMode ? Colors.white : Colors.black54), // Icon with dynamic color.
       title: Text(
         title,
-        // style: subtitle2,
       ),
     );
   }

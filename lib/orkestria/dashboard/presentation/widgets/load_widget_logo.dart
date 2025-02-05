@@ -1,39 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+/// A widget displaying a loading indicator with a logo.
 class LoaderWidget extends StatelessWidget {
   const LoaderWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Logo qui tourne
-            SizedBox(
-              height: 150,
-              width: 150,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  const SpinKitFadingCircle(
-                    color: Colors.white, // Couleur de l'animation
-                    size: 110.0,
-                  ),
-                  // Image du logo
-                  Image.asset(
-                    'assets/images/logo_splash.png',
-                    height: 60,
-                    width: 60,
-                  ),
-                ],
-              ),
+    return Center( // Centers the loading indicator.
+      child: Column(
+        mainAxisSize: MainAxisSize.min, // Ensures the column takes up minimal space.
+        children: [
+          SizedBox( // Contains the spinning animation and the logo.
+            height: 150,
+            width: 150,
+            child: Stack( // Use a Stack to overlay the logo on the animation.
+              alignment: Alignment.center,
+              children: [
+                const SpinKitFadingCircle( // The spinning animation.
+                  color: Colors.white, // Animation color.  // NOTE: Consider making this color dynamic based on the theme.
+                  size: 110.0,
+                ),
+                Image.asset( // The logo image.
+                  'assets/images/logo_splash.png',
+                  height: 60,
+                  width: 60,
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            // Texte de chargement
-          ],
-        ),
-      );
+          ),
+          const SizedBox(height: 20), // Spacing below the indicator.
+          // Text("Loading..."), // NOTE: Consider adding a loading text (perhaps customizable via a parameter).
+        ],
+      ),
+    );
   }
 }

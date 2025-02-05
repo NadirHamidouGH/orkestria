@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:dio/dio.dart';
-import 'package:orkestria/main.dart';
+import 'package:dio/dio.dart'; // NOTE: Consider injecting Dio instance.
+import 'package:orkestria/main.dart'; // NOTE: Consider injecting ThemeController via Provider.
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:orkestria/orkestria/alerts/domain/entities/alert.dart';
 import '../../../../core/constants.dart';
 
+/// Widget displaying recent alerts/notifications.
 class RecentFiles extends StatefulWidget {
   const RecentFiles({Key? key}) : super(key: key);
 
@@ -15,16 +16,17 @@ class RecentFiles extends StatefulWidget {
 }
 
 class _RecentFilesState extends State<RecentFiles> {
-  late Future<List<Alert>> _recentFilesFuture;
+  late Future<List<Alert>> _recentFilesFuture; // Future for recent alerts.
 
   @override
   void initState() {
     super.initState();
-    _recentFilesFuture = fetchRecentFiles();
+    _recentFilesFuture = fetchRecentFiles(); // Fetch recent alerts on initialization.
   }
 
+  /// Fetches recent alerts from the API.
   Future<List<Alert>> fetchRecentFiles() async {
-    final dio = Dio();
+    final dio = Dio(); // NOTE: Consider injecting Dio instance for better testing.
     final sharedPreferences = await SharedPreferences.getInstance();
     final bearerToken = sharedPreferences.getString('authToken');
 
@@ -37,12 +39,9 @@ class _RecentFilesState extends State<RecentFiles> {
     };
 
     try {
-      var response = await dio.request(
-        'https://ms.camapp.dev.fortest.store/projects/alerts/?skip=0&limit=4', // Use the same endpoint as AlertsList
-        options: Options(
-          method: 'GET',
-          headers: headers,
-        ),
+      var response = await dio.get( // Use dio.get for simplicity.
+        'https://ms.camapp.dev.fortest.store/projects/alerts/?skip=0&limit=4', // Same endpoint as AlertsList.
+        options: Options(headers: headers),
       );
 
       if (response.statusCode == 200) {
@@ -58,59 +57,49 @@ class _RecentFilesState extends State<RecentFiles> {
 
   @override
   Widget build(BuildContext context) {
-    final themeController = Provider.of<ThemeController>(context);
+    final themeController = Provider.of<ThemeController>(context); // Access ThemeController.
     final isDarkMode = themeController.isDarkMode;
 
-    return FutureBuilder<List<Alert>>(
+    return FutureBuilder<List<Alert>>( // Build UI based on future.
       future: _recentFilesFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: SizedBox());
-        } else if (snapshot.hasError) {
+        if (snapshot.connectionState == ConnectionState.waiting) { // Show empty SizedBox while loading.
+          return const Center(child: SizedBox()); // Or a more appropriate loading indicator.
+        } else if (snapshot.hasError) { // Show error message if error.
           return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) { // Show message if no data.
           return const Center(child: Text('No recent files found.'));
         } else {
-          List<Alert> recentFiles = snapshot.data!;
-          return Container(
+          List<Alert> recentFiles = snapshot.data!; // Get the data.
+          return Container( // Container for styling.
             padding: const EdgeInsets.all(paddingHalf),
             decoration: BoxDecoration(
               color: isDarkMode ? secondaryColor : secondaryColorLight,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                const Text( // Title.
                   "Notifications",
-                  // style: subtitle1,
                   style: TextStyle(fontSize: 18),
                 ),
-                SizedBox(
+                SizedBox( // Table of recent alerts.
                   width: double.infinity,
                   child: DataTable(
                     columnSpacing: defaultPadding,
-                    columns: const [
+                    columns: const [ // Table columns.
                       DataColumn(
-                        label: Text(
-                          "Event",
-                          // style: subtitle1Regular,
-                        ),
+                        label: Text("Event"),
                       ),
                       DataColumn(
-                        label: Text(
-                          "Date",
-                          // style: subtitle1Regular,
-                        ),
+                        label: Text("Date"),
                       ),
                       DataColumn(
-                        label: Text(
-                          "Time",
-                          // style: subtitle1Regular,
-                        ),
+                        label: Text("Time"),
                       ),
                     ],
-                    rows: List.generate(
+                    rows: List.generate( // Generate table rows.
                       recentFiles.length,
                           (index) => recentFileDataRow(recentFiles[index]),
                     ),
@@ -124,45 +113,43 @@ class _RecentFilesState extends State<RecentFiles> {
     );
   }
 
+  /// Builds a DataRow for a recent alert.
   DataRow recentFileDataRow(Alert alert) {
     return DataRow(
       cells: [
-        DataCell(
+        DataCell( // Event cell.
           Row(
             children: [
               SvgPicture.asset(
-                color: const Color(0xFFAB4545).withOpacity(0.8),
-                "assets/icons/alert.svg", // You can replace with the appropriate icon for the recent files
+                color: const Color(0xFFAB4545).withOpacity(0.8), // NOTE: Consider making this color dynamic.
+                "assets/icons/alert.svg",
                 height: 14,
                 width: 14,
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 4),
                 child: Text(
-                  alert.message?.split(' ').take(3).join(' ') ?? '',
-                  // style: bodyText2,
-                  style: TextStyle(fontSize: 12),
+                  alert.message?.split(' ').take(3).join(' ') ?? '', // Display first 3 words of message.
+                  style: const TextStyle(fontSize: 12),
                 ),
               ),
             ],
           ),
         ),
-        DataCell(
+        DataCell( // Date cell.
           Text(
             alert.createdAt.length > 10
-                ? alert.createdAt.substring(0, 10)
+                ? alert.createdAt.substring(0, 10) // Extract date.
                 : alert.createdAt,
-            // style: bodyText2,
-            style: TextStyle(fontSize: 12),
+            style: const TextStyle(fontSize: 12),
           ),
         ),
-        DataCell(
+        DataCell( // Time cell.
           Text(
             alert.createdAt.length > 10
-                ? alert.createdAt.substring(11,16) // Extract the time from the timestamp
+                ? alert.createdAt.substring(11, 16) // Extract time.
                 : '',
-            // style: bodyText2,
-            style: TextStyle(fontSize: 12),
+            style: const TextStyle(fontSize: 12),
           ),
         ),
       ],

@@ -3,83 +3,75 @@ import 'package:orkestria/data/datasources/user/user_datasource.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../domain/entities/user.dart';
 
+/// Implementation of the UserDataSource interface using a remote API.
 class UserDataSourceApi implements UserDataSource {
-  final Dio dio = Dio();
-  String? authToken;
-  String? refreshToken;
+  final Dio dio = Dio(); // Dio instance for network requests.
+  String? authToken; // Stores the authentication token.
+  String? refreshToken; // Stores the refresh token.
 
-  // Fonction pour authentifier l'utilisateur et obtenir un token JWT
+  /// Authenticates a user and retrieves a JWT token.
   @override
   Future<bool> authenticate(String username, String password) async {
     var headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
     };
 
-    var data = {
+    var data = { // Request body for authentication.
       'grant_type': 'password',
       'client_id': 'micro-project',
-      'client_secret': 'LYraqgcU76cyAKumDVxJYUBAoBS0sZqO',
+      'client_secret': 'LYraqgcU76cyAKumDVxJYUBAoBS0sZqO', // Client secret - should be handled securely!
       'username': username,
       'password': password,
     };
 
     try {
-      var response = await dio.post(
+      var response = await dio.post( // Makes the authentication request.
         'https://auth.corepulse.fr/realms/ORKESTRIA/protocol/openid-connect/token',
-        options: Options(
-          headers: headers,
-        ),
+        options: Options(headers: headers),
         data: data,
       );
 
       if (response.statusCode == 200) {
-        // Récupérer le token JWT et le stocker pour les futures requêtes
-        final sharedPreferences = await SharedPreferences.getInstance();
+        final sharedPreferences = await SharedPreferences.getInstance(); // Stores tokens in shared preferences.
 
         authToken = response.data['access_token'];
         refreshToken = response.data['refresh_token'];
         sharedPreferences.setString('authToken', authToken.toString());
-        sharedPreferences.setString('refresh_token', authToken.toString());
+        sharedPreferences.setString('refresh_token', refreshToken.toString()); // Corrected: Store the refresh token
         sharedPreferences.setString('username', username);
         sharedPreferences.setString('password', password);
 
         return true;
       } else {
-        print('Erreur d\'authentification: ${response.statusMessage}');
+        print('Authentication Error: ${response.statusMessage}');
         return false;
       }
     } catch (e) {
-      print('Erreur: $e');
+      print('Error: $e');
       return false;
     }
   }
 
-  // Fonction pour récupérer un utilisateur par son ID (avec authentification)
+  /// Fetches a user by ID. Requires authentication.
   @override
   Future<User> fetchUserById(String userId) async {
-    // Vérifie si l'utilisateur est authentifié avant de faire une requête API
     if (authToken == null) {
-      throw Exception('Utilisateur non authentifié');
+      throw Exception('User not authenticated');
     }
 
     var headers = {
       'Authorization': 'Bearer $authToken',
     };
 
-    var data = {};
-
     try {
-      var response = await dio.get(
-        'https://example.com/api/users/$userId', // Remplace cette URL par celle de ton API
-        options: Options(
-          headers: headers,
-        ),
-        data: data,
+      var response = await dio.get( // Makes the request to fetch the user.
+        'https://example.com/api/users/$userId', // Replace with your API endpoint.
+        options: Options(headers: headers),
       );
 
       if (response.statusCode == 200) {
-        var userData = response.data; // Adapte cette ligne à la structure de ta réponse API
-        return User(
+        var userData = response.data; // Adapt to your API response structure.
+        return User( // Creates a User object from the API response.
           id: userData['id'],
           name: userData['name'],
           email: userData['email'],
@@ -91,17 +83,17 @@ class UserDataSourceApi implements UserDataSource {
           zoneIds: List<String>.from(userData['zoneIds']),
         );
       } else {
-        throw Exception('Erreur lors de la récupération de l\'utilisateur');
+        throw Exception('Error fetching user');
       }
     } catch (e) {
-      print('Erreur: $e');
-      rethrow;
+      print('Error: $e');
+      rethrow; // Rethrows the caught exception.
     }
   }
 
-  // Fonction pour sauvegarder un utilisateur (pas implémentée ici, mais peut être adaptée)
+  /// Saves a user (not implemented here).
   @override
   Future<void> saveUser(User user) async {
-    // Implémente la logique pour enregistrer l'utilisateur, si nécessaire
+    // Implement user saving logic if needed.
   }
 }

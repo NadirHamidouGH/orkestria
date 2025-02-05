@@ -6,43 +6,42 @@ import '../widgets/my_fields.dart';
 import '../widgets/recent_files.dart';
 import '../widgets/sensors_details.dart';
 
+/// Screen displaying the main dashboard.
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-
-    return SafeArea(
-      child: SingleChildScrollView(
-        primary: false,
-        padding: const EdgeInsets.all(defaultPadding),
+    return SafeArea( // Ensures content is within safe area.
+      child: SingleChildScrollView( // Allows scrolling if content overflows.
+        primary: false, // Prevents nested scrolling issues.
+        padding: const EdgeInsets.all(defaultPadding), // Padding around the content.
         child: Column(
           children: [
-            const Header(),
-            const SizedBox(height: defaultPadding),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            const Header(), // Header section.
+            const SizedBox(height: defaultPadding), // Spacing.
+            Row( // Main content layout (row for larger screens, column for smaller).
+              crossAxisAlignment: CrossAxisAlignment.start, // Align children to the start.
               children: [
-                Expanded(
-                  flex: 5,
+                Expanded( // Left side content (files, recent files).
+                  flex: 5, // Takes 5/7 of the available space on larger screens.
                   child: Column(
                     children: [
-                      const MyFiles(),
-                      const SizedBox(height: defaultPadding),
-                      const RecentFiles(),
-                      if (Responsive.isMobile(context))
-                        const SizedBox(height: defaultPadding),
-                      if (Responsive.isMobile(context)) SensorsDetails(),
+                      const MyFiles(), // My files widget.
+                      const SizedBox(height: defaultPadding), // Spacing.
+                      const RecentFiles(), // Recent files widget.
+                      if (Responsive.isMobile(context)) // Conditional rendering for mobile.
+                        const SizedBox(height: defaultPadding), // Spacing on mobile.
+                      if (Responsive.isMobile(context)) SensorsDetails(), // Sensors details on mobile.
                     ],
                   ),
                 ),
-                if (!Responsive.isMobile(context))
-                  const SizedBox(width: defaultPadding),
-                // On Mobile means if the screen is less than 850 we don't want to show it
-                if (!Responsive.isMobile(context))
-                  Expanded(
-                    flex: 2,
-                    child: SensorsDetails(),
+                if (!Responsive.isMobile(context)) // Conditional rendering for larger screens.
+                  const SizedBox(width: defaultPadding), // Spacing on larger screens.
+                if (!Responsive.isMobile(context)) // Sensors details on larger screens.
+                   Expanded(
+                    flex: 2, // Takes 2/7 of the available space on larger screens.
+                    child: SensorsDetails(), // Sensors details widget.
                   ),
               ],
             )

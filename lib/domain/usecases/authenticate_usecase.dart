@@ -2,20 +2,18 @@ import 'package:dio/dio.dart';
 import 'package:orkestria/domain/repositories/user_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Use case for authenticating a user and refreshing the authentication token.
 class AuthenticateUseCase {
-  final UserRepository userRepository;
+  final UserRepository userRepository; // Repository for user-related operations.
+  final Dio dio; // Dio instance for network requests.
 
   AuthenticateUseCase(this.userRepository, this.dio);
 
-  final Dio dio;
+  String? authToken; // Stores the authentication token.
 
-  String? authToken;
-
-
+  /// Refreshes the authentication token using the refresh token.
   Future<void> refreshToken() async {
-
     try {
-      // Retrieve the refresh token from SharedPreferences
       final sharedPreferences = await SharedPreferences.getInstance();
       final refreshToken = sharedPreferences.getString('refresh_token');
 
@@ -23,23 +21,20 @@ class AuthenticateUseCase {
         throw Exception('No refresh token found. Please log in again.');
       }
 
-      // Send the refresh token to the server to get a new access token
       final response = await dio.post(
         'https://auth.corepulse.fr/realms/ORKESTRIA/protocol/openid-connect/token',
         data: {
           'grant_type': 'refresh_token',
           'client_id': 'micro-project',
-          'client_secret': 'LYraqgcU76cyAKumDVxJYUBAoBS0sZqO',
+          'client_secret': 'LYraqgcU76cyAKumDVxJYUBAoBS0sZqO', // NOTE: Hardcoded client secret - BAD PRACTICE! Should be stored securely.
           'refresh_token': refreshToken,
         },
       );
 
       if (response.statusCode == 200) {
         authToken = response.data['access_token'];
-
-        // Save the new token in SharedPreferences
         final sharedPreferences = await SharedPreferences.getInstance();
-        await sharedPreferences.setString('authToken', authToken!);
+        await sharedPreferences.setString('authToken', authToken!); // NOTE: Force unwrap might be risky if authToken is null. Consider null safety measures.
       } else {
         throw Exception('Failed to refresh token');
       }
@@ -48,6 +43,7 @@ class AuthenticateUseCase {
     }
   }
 
+  /// Authenticates a user using the provided credentials.
   Future<bool> call(String username, String password) async {
     return await userRepository.authenticate(username, password);
   }

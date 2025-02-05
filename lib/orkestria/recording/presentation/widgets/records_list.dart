@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:dio/dio.dart';
-import 'package:orkestria/main.dart';
+import 'package:dio/dio.dart'; // NOTE: Consider injecting Dio instance.
+import 'package:orkestria/main.dart'; // NOTE: Consider injecting ThemeController via Provider.
 import 'package:orkestria/orkestria/dashboard/presentation/widgets/load_widget_logo.dart';
 import 'package:orkestria/orkestria/recording/domain/entities/record.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants.dart';
 
+/// Widget displaying a list of camera records.
 class RecordsList extends StatefulWidget {
   const RecordsList({super.key});
 
@@ -17,19 +18,19 @@ class RecordsList extends StatefulWidget {
 }
 
 class _RecordsListState extends State<RecordsList> {
-  int _currentPage = 0;
-  final int _itemsPerPage = 9;
-  Future<List<Records>>? _recordsFuture;
+  int _currentPage = 0; // Current page number.
+  final int _itemsPerPage = 9; // Number of items per page.
+  Future<List<Records>>? _recordsFuture; // Future for fetching records.
 
   @override
   void initState() {
     super.initState();
-    _recordsFuture = fetchRecords(_currentPage);
+    _recordsFuture = fetchRecords(_currentPage); // Fetch initial records.
   }
 
-  // Updated fetchRecords to include page-based fetching
+  /// Fetches records from the API with pagination.
   Future<List<Records>> fetchRecords(int page) async {
-    final dio = Dio();
+    final dio = Dio(); // NOTE: Consider injecting Dio instance.
     final sharedPreferences = await SharedPreferences.getInstance();
     final bearerToken = sharedPreferences.getString('authToken');
 
@@ -50,17 +51,18 @@ class _RecordsListState extends State<RecordsList> {
         ),
       );
 
-      if (response.statusCode == 200) {
-        List<dynamic> jsonData = response.data["data"];
-        return jsonData.map((record) => Records.fromJson(record)).toList();
-      } else {
-        throw Exception('Failed to load records: ${response.statusMessage}');
-      }
+    if (response.statusCode == 200) {
+    List<dynamic> jsonData = response.data["data"]; // Access the "data" field.
+    return jsonData.map((record) => Records.fromJson(record)).toList();
+    } else {
+    throw Exception('Failed to load records: ${response.statusMessage}');
+    }
     } catch (e) {
-      throw Exception('Error fetching records: ${e.toString()}');
+    throw Exception('Error fetching records: ${e.toString()}'); // NOTE: Consider more specific error handling.
     }
   }
 
+  /// Loads the next page of records.
   void _loadNextPage() {
     setState(() {
       _currentPage++;
@@ -68,6 +70,7 @@ class _RecordsListState extends State<RecordsList> {
     });
   }
 
+  /// Loads the previous page of records.
   void _loadPreviousPage() {
     if (_currentPage > 0) {
       setState(() {
@@ -79,49 +82,48 @@ class _RecordsListState extends State<RecordsList> {
 
   @override
   Widget build(BuildContext context) {
-    final themeController = Provider.of<ThemeController>(context);
+    final themeController = Provider.of<ThemeController>(context); // Access ThemeController.
     final isDarkMode = themeController.isDarkMode;
 
-    return Container(
+    return Container( // Container for styling.
       padding: const EdgeInsets.all(paddingHalf),
       decoration: BoxDecoration(
         color: isDarkMode ? secondaryColor : secondaryColorLight,
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
-      child: SingleChildScrollView(
+      child: SingleChildScrollView( // Allows vertical scrolling.
         scrollDirection: Axis.vertical,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            const Text( // Title.
               "Camera KPI",
               style: TextStyle(fontSize: 24),
-              // style: heading2,
             ),
-            FutureBuilder<List<Records>>(
+            FutureBuilder<List<Records>>( // Build UI based on future.
               future: _recordsFuture,
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+                if (snapshot.connectionState == ConnectionState.waiting) { // Show loading indicator.
                   return const Center(
-                      child: Column(children: [
-                        LoaderWidget(),
+                      child: Column(
+                        children: [
+                          LoaderWidget(),
                           Spacer()
-                      ],)
-
-                  );
-                } else if (snapshot.hasError) {
+                        ],
+                      ));
+                } else if (snapshot.hasError) { // Show error message.
                   return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) { // Show "no records" message.
                   return const Center(child: Text('No records found.'));
                 }
 
-                final records = snapshot.data!;
+                final records = snapshot.data!; // Get the records data.
 
-                return SizedBox(
+                return SizedBox( // Table of records.
                   width: double.infinity,
                   child: DataTable(
                     columnSpacing: 4,
-                    columns: const [
+                    columns: const [ // Table columns.
                       DataColumn(
                         label: Text("Object"),
                       ),
@@ -135,12 +137,12 @@ class _RecordsListState extends State<RecordsList> {
                         label: Text("Image"),
                       ),
                     ],
-                    rows: records.map((record) => recordDataRow(record)).toList(),
+                    rows: records.map((record) => recordDataRow(record)).toList(), // Generate table rows.
                   ),
                 );
               },
             ),
-            Row(
+            Row( // Pagination buttons.
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
@@ -161,14 +163,15 @@ class _RecordsListState extends State<RecordsList> {
     );
   }
 
+  /// Builds a DataRow for a record.
   DataRow recordDataRow(Records record) {
     return DataRow(
       cells: [
-        DataCell(
+        DataCell( // Object cell.
           Row(
             children: [
               SvgPicture.asset(
-                color: Colors.grey,
+                color: Colors.grey, // NOTE: Consider making this color dynamic.
                 'assets/icons/record.svg',
                 height: 18,
                 width: 18,
@@ -181,27 +184,27 @@ class _RecordsListState extends State<RecordsList> {
             ],
           ),
         ),
-        DataCell(
+        DataCell( // Date cell.
           Text(
             record.capturedAt.toIso8601String().split('T')[0],
             style: const TextStyle(fontSize: 12),
           ),
         ),
-        DataCell(
+        DataCell( // IC cell.
           Text(
             textAlign: TextAlign.center,
             record.confidence.toStringAsFixed(2),
             style: const TextStyle(fontSize: 12),
           ),
         ),
-        DataCell(
+        DataCell( // Image cell.
           IconButton(
             icon: const Icon(LucideIcons.image),
             onPressed: () {
-              showDialog(
+              showDialog( // Show image in a modal dialog.
                 context: context,
                 builder: (BuildContext context) {
-                  return ImageModal(imageUrl: truncateString(record.imagePath));
+                  return ImageModal(imageUrl: truncateString(record.imagePath)); // Pass truncated URL.
                 },
               );
             },
@@ -212,6 +215,7 @@ class _RecordsListState extends State<RecordsList> {
   }
 }
 
+/// Truncates the image URL to remove query parameters.
 String truncateString(String inputString) {
   int index = inputString.indexOf("?response-content-type=");
   if (index != -1) {
@@ -221,7 +225,7 @@ String truncateString(String inputString) {
   }
 }
 
-
+/// Modal dialog displaying an image.
 class ImageModal extends StatefulWidget {
   final String imageUrl;
 

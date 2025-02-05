@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:orkestria/main.dart';
+import 'package:orkestria/main.dart'; // NOTE: Consider injecting ThemeController via Provider.
 import 'package:provider/provider.dart';
 import '../../../../core/utils/colors.dart';
 
+/// A loading grid dashboard with animated gradient boxes.
 class LoadingGridDashboard extends StatefulWidget {
   @override
   _LoadingGridDashboardState createState() => _LoadingGridDashboardState();
@@ -10,20 +11,20 @@ class LoadingGridDashboard extends StatefulWidget {
 
 class _LoadingGridDashboardState extends State<LoadingGridDashboard>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+  late AnimationController _controller; // Animation controller for the gradient.
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    _controller = AnimationController( // Initialize the animation controller.
       vsync: this,
       duration: const Duration(seconds: 2),
-    )..repeat(reverse: false);
+    )..repeat(reverse: false); // Repeat the animation.
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller.dispose(); // Dispose of the animation controller.
     super.dispose();
   }
 
@@ -35,17 +36,17 @@ class _LoadingGridDashboardState extends State<LoadingGridDashboard>
         child: Column(
           children: [
             Expanded(
-              child: GridView.builder(
+              child: GridView.builder( // Grid view for the loading boxes.
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+                  crossAxisCount: 2, // 2 columns.
                   mainAxisSpacing: 16,
                   crossAxisSpacing: 16,
                   childAspectRatio: 1.2,
                 ),
                 itemBuilder: (context, index) {
-                  return AnimatedGradientBox(animation: _controller);
+                  return AnimatedGradientBox(animation: _controller); // Create animated box.
                 },
-                itemCount: 4,
+                itemCount: 4, // Number of boxes.
               ),
             ),
           ],
@@ -55,23 +56,25 @@ class _LoadingGridDashboardState extends State<LoadingGridDashboard>
   }
 }
 
+/// An animated gradient box.
 class AnimatedGradientBox extends StatelessWidget {
-  final Animation<double> animation;
+  final Animation<double> animation; // Animation for the gradient.
 
   const AnimatedGradientBox({required this.animation, Key? key})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final themeController = Provider.of<ThemeController>(context);
+    final themeController = Provider.of<ThemeController>(context); // Access ThemeController.
     final isDarkMode = themeController.isDarkMode;
 
-    return AnimatedBuilder(
+    return AnimatedBuilder( // Animate the gradient.
       animation: animation,
       builder: (context, child) {
-        return ShaderMask(
+        return ShaderMask( // Apply the gradient shader.
           shaderCallback: (bounds) {
-            return isDarkMode ? LinearGradient(
+            return isDarkMode
+                ? LinearGradient( // Gradient for dark mode.
               colors: const [
                 secondaryColor,
                 kPrimaryColor,
@@ -80,8 +83,8 @@ class AnimatedGradientBox extends StatelessWidget {
               stops: const [0.0, 0.5, 1.0],
               begin: Alignment(-3.0 + 1.0 * animation.value, 0.0),
               end: Alignment(1.0 + 3.0 * animation.value, 0.0),
-            ).createShader(bounds):
-                                LinearGradient(
+            ).createShader(bounds)
+                : LinearGradient( // Gradient for light mode.
               colors: const [
                 secondaryColorLight,
                 kPrimaryColorLight,
@@ -93,24 +96,20 @@ class AnimatedGradientBox extends StatelessWidget {
             ).createShader(bounds);
           },
           blendMode: BlendMode.srcIn,
-          child: Container(
+          child: Container( // Container with rounded corners and icon.
             decoration: BoxDecoration(
-              color: kPrimaryColor,
+              color: kPrimaryColor, // NOTE: Consider making this color dynamic.
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Opacity(
-              opacity: 0.1, // Adjust opacity as needed
-              child: Opacity(
-                opacity: 0.1, // Adjust opacity as needed
-                child: Center(
-                        child: Icon(
-                          Icons.flash_on,
-                          color: Colors.yellow[700],
-                          size: 40,
-                        ),
-                      ),
-                 // Use the provided item widget
-              ), // Use the provided item widget
+            child: const Opacity( // Opacity for the shimmer effect.
+              opacity: 0.1,
+              child: Center(
+                child: Icon(
+                  Icons.flash_on,
+                  color: Colors.yellow, // NOTE: Consider making this color dynamic.
+                  size: 40,
+                ),
+              ),
             ),
           ),
         );

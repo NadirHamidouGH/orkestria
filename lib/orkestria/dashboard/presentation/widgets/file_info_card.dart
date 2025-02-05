@@ -1,39 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:orkestria/main.dart';
+import 'package:orkestria/main.dart'; // NOTE: Consider injecting ThemeController via Provider instead of direct import.
 import 'package:orkestria/orkestria/alerts/presentation/routes/alerts_route.dart';
 import 'package:orkestria/orkestria/camera%20kpi/presentation/routes/camera_kpi_route.dart';
 import 'package:orkestria/orkestria/projects/presentation/routes/projects_route.dart';
 import 'package:orkestria/orkestria/recording/presentation/routes/recording_route.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../core/constants.dart';
 import '../../data/my_files.dart';
 
+/// Displays information about a file or data category.
 class FileInfoCard extends StatelessWidget {
   const FileInfoCard({
     Key? key,
     required this.info,
   }) : super(key: key);
 
-  final CloudStorageInfo info;
+  final CloudStorageInfo info; // Data for the card.
 
   @override
   Widget build(BuildContext context) {
-    final themeController = Provider.of<ThemeController>(context);
+    final themeController = Provider.of<ThemeController>(context); // Access ThemeController.
     final isDarkMode = themeController.isDarkMode;
 
-    return GestureDetector(
-      onTap: (){
-        switch(info.title){
-          case'Sites': GoRouter.of(context).push(projectsRoutePath);
-          case'Camera KPI': GoRouter.of(context).push(recordingRoutePath);
-          case'Cameras': GoRouter.of(context).push(cameraKpiRoutePath);
-          case'Alerts': GoRouter.of(context).push(alertsRoutePath);
+    return GestureDetector( // Makes the card tappable.
+      onTap: () {
+        switch (info.title) { // Navigate based on card title.
+          case 'Sites':
+            GoRouter.of(context).push(projectsRoutePath);
+            break; // Important to prevent fallthrough!
+          case 'Camera KPI':
+            GoRouter.of(context).push(recordingRoutePath);
+            break;
+          case 'Cameras':
+            GoRouter.of(context).push(cameraKpiRoutePath);
+            break;
+          case 'Alerts':
+            GoRouter.of(context).push(alertsRoutePath);
+            break;
+          default:
+          // Handle unknown titles or log a warning.
+            print('Unknown route for title: ${info.title}'); // Or a more robust way to handle the unknown route.
         }
       },
-      child: Container(
+      child: Container( // Container for styling.
         padding: const EdgeInsets.all(defaultPadding),
         decoration: BoxDecoration(
           color: isDarkMode ? secondaryColor : secondaryColorLight,
@@ -46,7 +57,7 @@ class FileInfoCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
+                Container( // Icon container.
                   padding: const EdgeInsets.all(defaultPadding * 0.75),
                   height: 40,
                   width: 40,
@@ -56,40 +67,29 @@ class FileInfoCard extends StatelessWidget {
                   ),
                   child: SvgPicture.asset(
                     info.svgSrc!,
-                    colorFilter: ColorFilter.mode(
-                        info.color ?? Colors.black, BlendMode.srcIn),
+                    colorFilter:
+                    ColorFilter.mode(info.color ?? Colors.black, BlendMode.srcIn),
                   ),
                 ),
-                 Icon(Icons.more_vert, color: isDarkMode ? Colors.white54 : Colors.black54 )
+                const Icon(Icons.more_vert, // More options icon.
+                    color: Colors.white54) // NOTE: Consider making the icon color dynamic based on theme.
               ],
             ),
-            Text(
+            Text( // Title text.
               info.title!,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              // style: subtitle1Regular,
             ),
-            // ProgressLine(
-            //   color: info.color,
-            //   percentage: info.percentage,
-            // ),
-            Row(
+            Row( // File count and storage info.
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   "${info.numOfFiles}",
-                  style: TextStyle(fontSize: 12),
-                  // style: Theme.of(context)
-                  //     .textTheme
-                  //     .bodySmall!,
+                  style: const TextStyle(fontSize: 12),
                 ),
                 Text(
                   info.totalStorage!,
-                  style: TextStyle(fontSize: 12),
-                  // style: Theme.of(context)
-                  //     .textTheme
-                  //     .bodySmall!
-                  //     .copyWith(color: Colors.white70),
+                  style: const TextStyle(fontSize: 12),
                 ),
               ],
             )
@@ -100,6 +100,7 @@ class FileInfoCard extends StatelessWidget {
   }
 }
 
+/// Displays a progress bar.
 class ProgressLine extends StatelessWidget {
   const ProgressLine({
     Key? key,
@@ -107,14 +108,14 @@ class ProgressLine extends StatelessWidget {
     required this.percentage,
   }) : super(key: key);
 
-  final Color? color;
-  final int? percentage;
+  final Color? color; // Color of the progress bar.
+  final int? percentage; // Percentage of progress.
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Stack( // Use a Stack to create the progress bar effect.
       children: [
-        Container(
+        Container( // Background track.
           width: double.infinity,
           height: 5,
           decoration: BoxDecoration(
@@ -122,7 +123,7 @@ class ProgressLine extends StatelessWidget {
             borderRadius: const BorderRadius.all(Radius.circular(10)),
           ),
         ),
-        LayoutBuilder(
+        LayoutBuilder( // Builds the filled portion of the progress bar.
           builder: (context, constraints) => Container(
             width: constraints.maxWidth * (percentage! / 100),
             height: 5,

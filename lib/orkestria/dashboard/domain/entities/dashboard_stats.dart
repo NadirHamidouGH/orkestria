@@ -1,3 +1,4 @@
+/// Represents dashboard statistics.
 class DashboardStats {
   final int projects;
   final int zones;
@@ -19,10 +20,10 @@ class DashboardStats {
     required this.alertsBySensorType,
   });
 
-  // Factory constructor to create the entity from JSON
+  /// Creates a DashboardStats instance from a JSON map.
   factory DashboardStats.fromJson(Map<String, dynamic> json) {
-    var list = json['alerts_by_sensor_type'] as List;
-    List<AlertBySensorType> alertsList = list.map((i) => AlertBySensorType.fromJson(i)).toList();
+    var list = json['alerts_by_sensor_type'] as List; // Get the list of alerts by sensor type.
+    List<AlertBySensorType> alertsList = list.map((i) => AlertBySensorType.fromJson(i)).toList(); // Convert each item in the list to an AlertBySensorType object.
 
     return DashboardStats(
       projects: json['projects'] as int,
@@ -36,7 +37,7 @@ class DashboardStats {
     );
   }
 
-  // Method to convert the entity to JSON
+  /// Converts a DashboardStats instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'projects': projects,
@@ -46,11 +47,12 @@ class DashboardStats {
       'cameras': cameras,
       'alerts': alerts,
       'camera_kpi': cameraKpi,
-      'alerts_by_sensor_type': alertsBySensorType.map((e) => e.toJson()).toList(),
+      'alerts_by_sensor_type': alertsBySensorType.map((e) => e.toJson()).toList(), // Convert each AlertBySensorType object to JSON.
     };
   }
 }
 
+/// Represents alert counts by sensor type.
 class AlertBySensorType {
   final int alertCount;
   final String sensorId;
@@ -62,7 +64,7 @@ class AlertBySensorType {
     required this.sensorType,
   });
 
-  // Factory constructor to create the object from JSON
+  /// Creates an AlertBySensorType instance from a JSON map.
   factory AlertBySensorType.fromJson(Map<String, dynamic> json) {
     return AlertBySensorType(
       alertCount: json['alert_count'] as int,
@@ -71,7 +73,7 @@ class AlertBySensorType {
     );
   }
 
-  // Method to convert the object to JSON
+  /// Converts an AlertBySensorType instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'alert_count': alertCount,

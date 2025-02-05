@@ -12,53 +12,56 @@ import 'package:orkestria/orkestria/dashboard/data/dashboard_datasource.dart';
 import 'package:orkestria/orkestria/dashboard/domain/repositories/dashboard_repository.dart';
 import 'package:orkestria/orkestria/dashboard/domain/usecases/get_dashboard_stats_usecase.dart';
 
+/// Sets up and provides dependencies using Provider.
+/// This function initializes various services, repositories, and use cases
+/// and makes them available throughout the application.
 MultiProvider setupProviders(Widget child) {
-  final dio = Dio(
+  final dio = Dio( // Creates a Dio instance for making network requests.
     BaseOptions(
-      baseUrl: 'https://auth.corepulse.fr/',
-      connectTimeout: const Duration(seconds: 5),
-      receiveTimeout: const Duration(seconds: 3),
+      baseUrl: 'https://auth.corepulse.fr/', // Base URL for the API.
+      connectTimeout: const Duration(seconds: 5), // Connection timeout.
+      receiveTimeout: const Duration(seconds: 3), // Receive timeout.
     ),
   );
 
-  return MultiProvider(
+  return MultiProvider( // Provides multiple dependencies to the widget tree.
     providers: [
-      // Provide the implementation of UserRepository
-      Provider(
-        create: (_) => UserRepositoryImpl(UserDataSourceApi()),
+      // Provides the UserRepository implementation.
+      Provider<UserRepositoryImpl>(
+        create: (_) => UserRepositoryImpl(UserDataSourceApi()), // Creates an instance of UserRepositoryImpl.
       ),
-      // Provide the implementation of ProjectRepository
-      Provider(
-        create: (_) => ProjectRepositoryImpl(ProjectDataSourceApi(dio)),
+      // Provides the ProjectRepository implementation.
+      Provider<ProjectRepositoryImpl>(
+        create: (_) => ProjectRepositoryImpl(ProjectDataSourceApi(dio)), // Creates an instance of ProjectRepositoryImpl.
       ),
-      // Provide the Dio instance
-      Provider(
-        create: (_) => dio,
+      // Provides the Dio instance for network requests.
+      Provider<Dio>(
+        create: (_) => dio, // Provides the pre-configured Dio instance.
       ),
-      // Provide the UseCase AuthenticateUseCase
+      // Provides the AuthenticateUseCase.
       ProxyProvider2<UserRepositoryImpl, Dio, AuthenticateUseCase>(
         update: (_, repository, dio, __) =>
-            AuthenticateUseCase(repository, dio),
+            AuthenticateUseCase(repository, dio), // Creates an instance of AuthenticateUseCase with dependencies.
       ),
-      // Provide the UseCase FetchProjectsUseCase
+      // Provides the FetchProjectsUseCase.
       ProxyProvider2<ProjectRepositoryImpl, Dio, FetchProjectsUseCase>(
         update: (_, projectRepository, dio, __) =>
-            FetchProjectsUseCase(projectRepository),
+            FetchProjectsUseCase(projectRepository), // Creates an instance of FetchProjectsUseCase.
       ),
-      // Provide the DashboardDataSourceApi
+      // Provides the DashboardDataSourceApi.  Consider using a mock or real implementation here.
       Provider<DashboardDataSourceApi>(
-        create: (_) => DashboardDataSourceApi(), // Use your mock data source
+        create: (_) => DashboardDataSourceApi(), // Creates an instance of DashboardDataSourceApi.  Currently uses a basic implementation.
       ),
-      // Provide the DashboardRepository
+      // Provides the DashboardRepository implementation.
       ProxyProvider<DashboardDataSourceApi, DashboardRepository>(
-        update: (_, dataSource, __) => DashboardRepositoryImpl(dataSource),
+        update: (_, dataSource, __) => DashboardRepositoryImpl(dataSource), // Creates an instance of DashboardRepositoryImpl.
       ),
-      // Provide the UseCase GetDashboardStatsUseCase
+      // Provides the GetDashboardStatsUseCase.
       ProxyProvider<DashboardRepository, GetDashboardStatsUseCase>(
         update: (_, dashboardRepository, __) =>
-            GetDashboardStatsUseCase(dashboardRepository),
+            GetDashboardStatsUseCase(dashboardRepository), // Creates an instance of GetDashboardStatsUseCase.
       ),
     ],
-    child: child,
+    child: child, // The child widget that will have access to the provided dependencies.
   );
 }

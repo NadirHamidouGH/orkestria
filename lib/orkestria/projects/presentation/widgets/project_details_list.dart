@@ -1,14 +1,15 @@
+import 'package:dio/dio.dart'; // NOTE: Consider injecting Dio instance.
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:dio/dio.dart';
+import 'package:orkestria/core/constants.dart';
+import 'package:orkestria/main.dart'; // NOTE: Consider injecting ThemeController via Provider.
 import 'package:orkestria/orkestria/projects/domain/entities/project.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../core/constants.dart';
 import '../../../dashboard/presentation/widgets/load_widget_logo.dart';
 
-// Service for fetching projects via API
+/// Fetches projects from the API.
 Future<List<Project>> fetchProjects() async {
-  final dio = Dio();
+  final dio = Dio(); // NOTE: Consider injecting Dio instance for testability.
   final sharedPreferences = await SharedPreferences.getInstance();
   final bearerToken = sharedPreferences.getString('authToken');
 
@@ -21,12 +22,9 @@ Future<List<Project>> fetchProjects() async {
   };
 
   try {
-    var response = await dio.request(
+    var response = await dio.get( // Use dio.get for simpler requests.
       'https://ms.camapp.dev.fortest.store/projects/projects/',
-      options: Options(
-        method: 'GET',
-        headers: headers,
-      ),
+      options: Options(headers: headers),
     );
 
     if (response.statusCode == 200) {
@@ -36,11 +34,11 @@ Future<List<Project>> fetchProjects() async {
       throw Exception('Failed to load projects: ${response.statusMessage}');
     }
   } catch (e) {
-    throw Exception('Error fetching projects: ${e.toString()}');
+    throw Exception('Error fetching projects: ${e.toString()}'); // NOTE: Consider more specific error handling.
   }
 }
 
-// The main widget that retrieves projects from the API
+/// Widget to display a list of projects.
 class ProjectDetailsList extends StatefulWidget {
   const ProjectDetailsList({Key? key}) : super(key: key);
 
@@ -49,16 +47,17 @@ class ProjectDetailsList extends StatefulWidget {
 }
 
 class _ProjectDetailsListState extends State<ProjectDetailsList> {
-  List<Project> _projects = [];
-  bool _isLoading = false;
-  String _errorMessage = '';
+  List<Project> _projects = []; // List of projects.
+  bool _isLoading = false; // Loading state.
+  String _errorMessage = ''; // Error message.
 
   @override
   void initState() {
     super.initState();
-    _loadProjects();
+    _loadProjects(); // Load projects on initialization.
   }
 
+  /// Loads projects from the API.
   Future<void> _loadProjects() async {
     setState(() {
       _isLoading = true;
@@ -66,39 +65,40 @@ class _ProjectDetailsListState extends State<ProjectDetailsList> {
     });
 
     try {
-      List<Project> projects = await fetchProjects();
+      List<Project> projects = await fetchProjects(); // Fetch projects.
       setState(() {
-        _projects = projects;
+        _projects = projects; // Update project list.
       });
     } catch (e) {
       setState(() {
-        _errorMessage = 'Failed to load projects: ${e.toString()}';
+        _errorMessage = 'Failed to load projects: ${e.toString()}'; // Set error message.
       });
     } finally {
       setState(() {
-        _isLoading = false;
+        _isLoading = false; // Set loading to false.
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
+    if (_isLoading) { // Show loading indicator.
       return const Center(child: LoaderWidget());
     }
 
-    if (_errorMessage.isNotEmpty) {
+    if (_errorMessage.isNotEmpty) { // Show error message.
       return Center(child: Text(_errorMessage));
     }
 
-    return SingleChildScrollView(
+    return SingleChildScrollView( // Enables scrolling if content overflows.
       padding: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Titre "Sites"
-          const SizedBox(height: 24,),
-          const Padding(
+          const SizedBox(
+            height: 24,
+          ), // Spacing.
+          const Padding( // "Sites" title.
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               'Sites',
@@ -109,13 +109,14 @@ class _ProjectDetailsListState extends State<ProjectDetailsList> {
             ),
           ),
 
-          // Liste des projets
+          // List of projects.
           ListView.builder(
-            shrinkWrap: true,
+            shrinkWrap: true, // Important: needed for nested lists.
+            physics: const NeverScrollableScrollPhysics(), // Prevents scrolling of the inner list.
             itemCount: _projects.length,
             itemBuilder: (context, index) {
               final project = _projects[index];
-              return ProjectDetails(
+              return ProjectDetails( // Display project details.
                 projectName: project.name,
                 description: project.status ?? "----",
                 iconsData: [
@@ -132,7 +133,7 @@ class _ProjectDetailsListState extends State<ProjectDetailsList> {
   }
 }
 
-// Widget ProjectDetails to display each project
+/// Widget to display details for a single project.
 class ProjectDetails extends StatelessWidget {
   const ProjectDetails({
     super.key,
@@ -147,7 +148,7 @@ class ProjectDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Container( // Container for styling.
       margin: const EdgeInsets.all(8),
       padding: const EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
@@ -161,41 +162,41 @@ class ProjectDetails extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
+          Expanded( // Expanded to take available space.
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                Text( // Project name.
                   projectName,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: defaultPadding / 2),
-                Text(
+                const SizedBox(height: defaultPadding / 2), // Spacing.
+                Text( // Project description.
                   description,
                   style: const TextStyle(fontSize: 14),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: defaultPadding),
+                const SizedBox(height: defaultPadding), // Spacing.
               ],
             ),
           ),
-          Wrap(
+          Wrap( // Wrap for the icons.
             spacing: 8.0,
             runSpacing: 8.0,
             children: iconsData.map((data) {
               return Column(
                 children: [
-                  Icon(
+                  Icon( // Icon.
                     data["icon"] as IconData,
                     size: 30,
-                    color: Colors.grey,
+                    color: Colors.grey, // NOTE: Consider making this color dynamic.
                   ),
-                  const SizedBox(height: 4),
-                  Text(
+                  const SizedBox(height: 4), // Spacing.
+                  Text( // Icon text.
                     data["text"].toString(),
                     style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                   ),

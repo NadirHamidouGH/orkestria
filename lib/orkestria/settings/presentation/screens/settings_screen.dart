@@ -81,7 +81,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (isLoading) {
       return Container(
-          color: isDarkMode ? Colors.black : Colors.white,
+          color: isDarkMode ? bgColor : Colors.white,
           child: Center(child: isDarkMode ? const LoaderWidget() : const LoaderDarkWidget()));
     }
 

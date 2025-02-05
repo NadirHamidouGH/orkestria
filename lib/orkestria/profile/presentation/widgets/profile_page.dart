@@ -1,8 +1,8 @@
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart'; // NOTE: Consider injecting Dio instance.
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:orkestria/core/constants.dart';
-import 'package:orkestria/main.dart';
+import 'package:orkestria/main.dart'; // NOTE: Consider injecting ThemeController via Provider.
 import 'package:orkestria/orkestria/dashboard/data/dashboard_datasource.dart';
 import 'package:orkestria/orkestria/dashboard/data/dashboard_service.dart';
 import 'package:orkestria/orkestria/dashboard/domain/entities/dashboard_stats.dart';
@@ -13,6 +13,7 @@ import 'package:orkestria/orkestria/profile/presentation/widgets/contact_section
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Profile page widget.
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -21,66 +22,62 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  List<Tab> tabs = [
-     Tab(
+  List<Tab> tabs = [ // Tabs for the TabBar.
+    const Tab(
       text: "Profile",
-      icon: Icon(
-        LucideIcons.user,
-        // color: Colors.white,
-      ),
+      icon: Icon(LucideIcons.user),
     ),
-     Tab(
+    const Tab(
       text: "Info",
-      icon: Icon(
-        LucideIcons.info,
-        // color: Colors.white,
-      ),
+      icon: Icon(LucideIcons.info),
     ),
   ];
 
-  final DashboardService dashboardService =
+  final DashboardService dashboardService = // Dashboard service instance.
   DashboardService(dashboardDataSource: DashboardDataSourceApi());
 
-
-  Profile? profile;
-  DashboardStats? dashboardStats;
+  Profile? profile; // Profile data.
+  DashboardStats? dashboardStats; // Dashboard statistics data.
 
   @override
   void initState() {
     super.initState();
-    _fetchProfile();
-    _fetchDashboardData();
+    _fetchProfile(); // Fetch profile data.
+    _fetchDashboardData(); // Fetch dashboard data.
   }
 
+  /// Fetches profile data.
   Future<void> _fetchProfile() async {
     try {
       final sharedPreferences = await SharedPreferences.getInstance();
       final bearerToken = sharedPreferences.getString('authToken');
 
       if (bearerToken != null) {
-        final fetchedProfile = await fetchProfile(bearerToken);
+        final fetchedProfile = await fetchProfile(bearerToken); // Fetch profile.
         setState(() {
-          profile = fetchedProfile;
+          profile = fetchedProfile; // Update profile state.
         });
       } else {
-        print('Bearer token not found');
+        print('Bearer token not found'); // Log if token not found. // NOTE: Consider a more user-friendly message.
       }
     } catch (error) {
-      print('Error fetching profile: $error');
+      print('Error fetching profile: $error'); // Log error. // NOTE: Consider a more user-friendly message.
     }
   }
 
+  /// Fetches dashboard data.
   Future<void> _fetchDashboardData() async {
     try {
-      final stats = await dashboardService.fetchDashboardData();
+      final stats = await dashboardService.fetchDashboardData(); // Fetch dashboard stats.
       setState(() {
-        dashboardStats = stats;
+        dashboardStats = stats; // Update dashboard stats state.
       });
     } catch (error) {
-      print('Error fetching dashboard data: $error');
+      print('Error fetching dashboard data: $error'); // Log error. // NOTE: Consider a more user-friendly message.
     }
   }
 
+  /// Fetches a profile using a token.
   Future<Profile> fetchProfile(String token) async {
     final sharedPreferences = await SharedPreferences.getInstance();
     final username = sharedPreferences.getString('username');
@@ -89,62 +86,61 @@ class _ProfilePageState extends State<ProfilePage> {
       'Authorization': 'Bearer $token',
     };
 
-    final response =
-    await Dio().get(url, options: Options(headers: headers));
+    final response = await Dio().get( // NOTE: Consider injecting Dio instance.
+      url,
+      options: Options(headers: headers),
+    );
     if (response.statusCode == 200) {
-      return Profile.fromJson(response.data);
+      return Profile.fromJson(response.data); // Return profile from JSON.
     } else {
-      throw Exception('Failed to fetch profile');
+      throw Exception('Failed to fetch profile'); // Throw exception if fetch fails.
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeController = Provider.of<ThemeController>(context);
+    final themeController = Provider.of<ThemeController>(context); // Access ThemeController.
     final isDarkMode = themeController.isDarkMode;
 
-    return DefaultTabController(
+    return DefaultTabController( // Tab controller for the profile page.
       length: tabs.length,
       child: Scaffold(
-        appBar: AppBar(
+        appBar: AppBar( // App bar.
           elevation: 2,
-          automaticallyImplyLeading: false,
-          backgroundColor: isDarkMode ? bgColor : bgColor.withOpacity(0.4),
-          titleTextStyle: const TextStyle(
-            // color: Colors.white,// example 1
-            // fontWeight: FontWeight.w700,
-          ),
-          toolbarHeight: 180,
-          title: Padding(
+          automaticallyImplyLeading: false, // Remove back button.
+          backgroundColor: isDarkMode ? bgColor : bgColor.withOpacity(0.4), // Dynamic background color.
+          toolbarHeight: 180, // Height of the toolbar.
+          title: Padding( // Profile info in the app bar.
             padding: const EdgeInsets.only(top: 8.0),
-            child: profile != null ? Column(
-
+            child: profile != null // Show profile info or loading indicator.
+                ? Column(
               children: [
                 profilePhotos(profile!),
                 profileName(profile!),
                 hobbies(profile!),
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
-                  child: stats(profile!,dashboardStats!),
+                  child: stats(profile!, dashboardStats!),
                 ),
               ],
-            ):const Center(child: LoaderWidget()),
+            )
+                : const Center(child: LoaderWidget()), // Loading indicator.
           ),
-          bottom: TabBar(
+          bottom: TabBar( // Tab bar.
             tabs: tabs,
-            indicatorColor: isDarkMode ? Colors.white : Colors.black87,
+            indicatorColor: isDarkMode ? Colors.white : Colors.black87, // Indicator color.
             indicatorSize: TabBarIndicatorSize.tab,
-            labelColor: isDarkMode ? Colors.white : Colors.black87,
+            labelColor: isDarkMode ? Colors.white : Colors.black87, // Label color.
           ),
         ),
-        body: profile == null
-            ? const Center(child: SizedBox())
-            : TabBarView(
+        body: profile == null // Show content based on profile data.
+            ? const Center(child: SizedBox()) // Empty SizedBox while loading.
+            : TabBarView( // Tab bar view.
           children: [
-            SingleChildScrollView(
+            SingleChildScrollView( // Scrollable content for Contact section.
               child: ContactSection(profile: profile!),
             ),
-            SingleChildScrollView(
+            SingleChildScrollView( // Scrollable content for About section.
               child: AboutSection(profile: profile!),
             ),
           ],
@@ -153,87 +149,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Padding hobbies(Profile profile) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 5.0,
-        bottom: 5.0,
-      ),
-      child: Text(
-        profile.email,
-        // style: const TextStyle(
-        //   fontWeight: FontWeight.normal,
-        //   fontSize: 14,
-        //   color: Colors.grey,
-        // ),
-      ),
-    );
-  }
-
-  Padding profileName(Profile profile) {
-    return Padding(
-      padding: EdgeInsets.only(top: 8.0),
-      child: Text(
-        profile.username,
-      ),
-    );
-  }
-
-  Row stats(Profile profile,DashboardStats stats) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Column(
-          children: [
-            const Text(
-              "Zones",
-              // style: TextStyle(
-              //   color: Colors.white,
-              //   fontWeight: FontWeight.bold,),
-            ),
-            const SizedBox(height: 8.0),
-            Text(
-              stats.zones.toString(),
-              // style: const TextStyle(
-              // fontWeight: FontWeight.normal,
-              // color: Colors.grey),
-            ),
-          ],
-        ),
-        Column(
-          children: [
-            const Text(
-              "Cameras",
-              // style: TextStyle(
-              //   color: Colors.white,
-              //   fontWeight: FontWeight.bold,),
-            ),
-            const SizedBox(height: 8.0),
-            Text(
-              stats.cameras.toString(),
-            ),
-          ],
-        ),
-         Column(
-          children: [
-            const Text(
-              "Sensors",
-              // style: TextStyle(
-              //   color: Colors.white,
-              //   fontWeight: FontWeight.bold,
-              // ),
-            ),
-            const SizedBox(height: 8.0),
-            Text(
-              stats.sensors.toString(),
-              style: const TextStyle(fontWeight: FontWeight.normal),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
+  /// Displays profile photo.
   Container profilePhotos(Profile profile) {
     return Container(
       decoration: const BoxDecoration(
@@ -243,11 +159,66 @@ class _ProfilePageState extends State<ProfilePage> {
       width: 70,
       height: 70,
       alignment: Alignment.center,
-      child: const CircleAvatar(
+      child: const CircleAvatar( // NOTE: Consider making the image source dynamic.
         radius: 50,
         backgroundColor: Colors.transparent,
         backgroundImage: NetworkImage("https://picsum.photos/300/300"),
       ),
+    );
+  }
+
+  /// Displays profile name.
+  Padding profileName(Profile profile) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: Text(
+        profile.username,
+      ),
+    );
+  }
+
+  /// Displays user hobbies/email.
+  Padding hobbies(Profile profile) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 5.0,
+        bottom: 5.0,
+      ),
+      child: Text(
+        profile.email,
+      ),
+    );
+  }
+
+  /// Displays user stats (zones, cameras, sensors).
+  Row stats(Profile profile, DashboardStats stats) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Column(
+          children: [
+            const Text("Zones"),
+            const SizedBox(height: 8.0),
+            Text(stats.zones.toString()),
+          ],
+        ),
+        Column(
+          children: [
+            const Text("Cameras"),
+            const SizedBox(height: 8.0),
+            Text(stats.cameras.toString()),
+          ],
+        ),
+        Column(
+          children: [
+            const Text("Sensors"),
+            const SizedBox(height: 8.0),
+            Text(
+              stats.sensors.toString(),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
