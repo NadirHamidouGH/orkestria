@@ -22,7 +22,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  List<Tab> tabs = [ // Tabs for the TabBar.
+  List<Tab> tabs = [
+    // Tabs for the TabBar.
     const Tab(
       text: "Profile",
       icon: Icon(LucideIcons.user),
@@ -34,7 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
   ];
 
   final DashboardService dashboardService = // Dashboard service instance.
-  DashboardService(dashboardDataSource: DashboardDataSourceApi());
+      DashboardService(dashboardDataSource: DashboardDataSourceApi());
 
   Profile? profile; // Profile data.
   DashboardStats? dashboardStats; // Dashboard statistics data.
@@ -53,27 +54,32 @@ class _ProfilePageState extends State<ProfilePage> {
       final bearerToken = sharedPreferences.getString('authToken');
 
       if (bearerToken != null) {
-        final fetchedProfile = await fetchProfile(bearerToken); // Fetch profile.
+        final fetchedProfile =
+            await fetchProfile(bearerToken); // Fetch profile.
         setState(() {
           profile = fetchedProfile; // Update profile state.
         });
       } else {
-        print('Bearer token not found'); // Log if token not found. // NOTE: Consider a more user-friendly message.
+        print(
+            'Bearer token not found'); // Log if token not found. // NOTE: Consider a more user-friendly message.
       }
     } catch (error) {
-      print('Error fetching profile: $error'); // Log error. // NOTE: Consider a more user-friendly message.
+      print(
+          'Error fetching profile: $error'); // Log error. // NOTE: Consider a more user-friendly message.
     }
   }
 
   /// Fetches dashboard data.
   Future<void> _fetchDashboardData() async {
     try {
-      final stats = await dashboardService.fetchDashboardData(); // Fetch dashboard stats.
+      final stats =
+          await dashboardService.fetchDashboardData(); // Fetch dashboard stats.
       setState(() {
         dashboardStats = stats; // Update dashboard stats state.
       });
     } catch (error) {
-      print('Error fetching dashboard data: $error'); // Log error. // NOTE: Consider a more user-friendly message.
+      print(
+          'Error fetching dashboard data: $error'); // Log error. // NOTE: Consider a more user-friendly message.
     }
   }
 
@@ -81,70 +87,85 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<Profile> fetchProfile(String token) async {
     final sharedPreferences = await SharedPreferences.getInstance();
     final username = sharedPreferences.getString('username');
-    var url = 'https://ms.camapp.dev.fortest.store/projects/keycloak/users/$username';
+    var url =
+        'https://ms.camapp.dev.fortest.store/projects/keycloak/users/$username';
     final headers = {
       'Authorization': 'Bearer $token',
     };
 
-    final response = await Dio().get( // NOTE: Consider injecting Dio instance.
+    final response = await Dio().get(
+      // NOTE: Consider injecting Dio instance.
       url,
       options: Options(headers: headers),
     );
     if (response.statusCode == 200) {
       return Profile.fromJson(response.data); // Return profile from JSON.
     } else {
-      throw Exception('Failed to fetch profile'); // Throw exception if fetch fails.
+      throw Exception(
+          'Failed to fetch profile'); // Throw exception if fetch fails.
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeController = Provider.of<ThemeController>(context); // Access ThemeController.
+    final themeController =
+        Provider.of<ThemeController>(context); // Access ThemeController.
     final isDarkMode = themeController.isDarkMode;
 
-    return DefaultTabController( // Tab controller for the profile page.
+    return DefaultTabController(
+      // Tab controller for the profile page.
       length: tabs.length,
       child: Scaffold(
-        appBar: AppBar( // App bar.
+        appBar: AppBar(
+          // App bar.
           elevation: 2,
           automaticallyImplyLeading: false, // Remove back button.
-          backgroundColor: isDarkMode ? bgColor : secondaryColorLight, // Dynamic background color.
+          backgroundColor: isDarkMode
+              ? bgColor
+              : secondaryColorLight, // Dynamic background color.
           toolbarHeight: 180, // Height of the toolbar.
-          title: Padding( // Profile info in the app bar.
+          title: Padding(
+            // Profile info in the app bar.
             padding: const EdgeInsets.only(top: 8.0),
             child: profile != null // Show profile info or loading indicator.
                 ? Column(
-              children: [
-                profilePhotos(profile!),
-                profileName(profile!),
-                hobbies(profile!),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: stats(profile!, dashboardStats!),
-                ),
-              ],
-            )
+                    children: [
+                      profilePhotos(profile!),
+                      profileName(profile!),
+                      hobbies(profile!),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: stats(profile!, dashboardStats!),
+                      ),
+                    ],
+                  )
                 : const Center(child: LoaderWidget()), // Loading indicator.
           ),
-          bottom: TabBar( // Tab bar.
+          bottom: TabBar(
+            // Tab bar.
             tabs: tabs,
-            indicatorColor: isDarkMode ? Colors.white : Colors.black87, // Indicator color.
+            indicatorColor:
+                isDarkMode ? Colors.white : Colors.black87, // Indicator color.
             indicatorSize: TabBarIndicatorSize.tab,
-            labelColor: isDarkMode ? Colors.white : Colors.black87, // Label color.
+            labelColor:
+                isDarkMode ? Colors.white : Colors.black87, // Label color.
           ),
         ),
         body: profile == null // Show content based on profile data.
             ? const Center(child: SizedBox()) // Empty SizedBox while loading.
-            : TabBarView( // Tab bar view.
-          children: [
-            SingleChildScrollView( // Scrollable content for Contact section.
-              child: ContactSection(profile: profile!),
-            ),
-            SingleChildScrollView( // Scrollable content for About section.
-              child: AboutSection(profile: profile!),
-            ),
-          ],
-        ),
+            : TabBarView(
+                // Tab bar view.
+                children: [
+                  SingleChildScrollView(
+                    // Scrollable content for Contact section.
+                    child: ContactSection(profile: profile!),
+                  ),
+                  SingleChildScrollView(
+                    // Scrollable content for About section.
+                    child: AboutSection(profile: profile!),
+                  ),
+                ],
+              ),
       ),
     );
   }
@@ -159,7 +180,8 @@ class _ProfilePageState extends State<ProfilePage> {
       width: 70,
       height: 70,
       alignment: Alignment.center,
-      child: const CircleAvatar( // NOTE: Consider making the image source dynamic.
+      child: const CircleAvatar(
+        // NOTE: Consider making the image source dynamic.
         radius: 50,
         backgroundColor: Colors.transparent,
         backgroundImage: NetworkImage("https://picsum.photos/300/300"),
@@ -199,24 +221,28 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         Column(
           children: [
-            const Text("Zones",style: TextStyle(fontSize: 14),),
+            const Text(
+              "Zones",
+              style: TextStyle(fontSize: 14),
+            ),
             const SizedBox(height: 8.0),
-            Text(stats.zones.toString(),style: TextStyle(fontSize: 14)),
+            Text(stats.zones.toString(), style: TextStyle(fontSize: 14)),
           ],
         ),
         Column(
           children: [
-            const Text("Cameras",style: TextStyle(fontSize: 14)),
+            const Text("Cameras", style: TextStyle(fontSize: 14)),
             const SizedBox(height: 8.0),
-            Text(stats.cameras.toString(),style: TextStyle(fontSize: 14)),
+            Text(stats.cameras.toString(), style: TextStyle(fontSize: 14)),
           ],
         ),
         Column(
           children: [
-            const Text("Sensors",style: TextStyle(fontSize: 14)),
+            const Text("Sensors", style: TextStyle(fontSize: 14)),
             const SizedBox(height: 8.0),
             Text(
-              stats.sensors.toString(),style: TextStyle(fontSize: 14),
+              stats.sensors.toString(),
+              style: TextStyle(fontSize: 14),
             ),
           ],
         ),
