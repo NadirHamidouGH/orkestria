@@ -71,8 +71,8 @@ class FileInfoCard extends StatelessWidget {
                     ColorFilter.mode(info.color ?? Colors.black, BlendMode.srcIn),
                   ),
                 ),
-                const Icon(Icons.more_vert, // More options icon.
-                    color: Colors.white54) // NOTE: Consider making the icon color dynamic based on theme.
+                Icon(Icons.more_vert, // More options icon.
+                    color: isDarkMode ? Colors.white54 : Colors.black87) // NOTE: Consider making the icon color dynamic based on theme.
               ],
             ),
             Text( // Title text.

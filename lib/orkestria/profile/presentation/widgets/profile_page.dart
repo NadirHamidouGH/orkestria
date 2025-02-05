@@ -108,7 +108,7 @@ class _ProfilePageState extends State<ProfilePage> {
         appBar: AppBar( // App bar.
           elevation: 2,
           automaticallyImplyLeading: false, // Remove back button.
-          backgroundColor: isDarkMode ? bgColor : bgColor.withOpacity(0.4), // Dynamic background color.
+          backgroundColor: isDarkMode ? bgColor : secondaryColorLight, // Dynamic background color.
           toolbarHeight: 180, // Height of the toolbar.
           title: Padding( // Profile info in the app bar.
             padding: const EdgeInsets.only(top: 8.0),
@@ -173,6 +173,7 @@ class _ProfilePageState extends State<ProfilePage> {
       padding: const EdgeInsets.only(top: 8.0),
       child: Text(
         profile.username,
+        style: TextStyle(fontSize: 14),
       ),
     );
   }
@@ -186,6 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       child: Text(
         profile.email,
+        style: TextStyle(fontSize: 14),
       ),
     );
   }
@@ -197,24 +199,24 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         Column(
           children: [
-            const Text("Zones"),
+            const Text("Zones",style: TextStyle(fontSize: 14),),
             const SizedBox(height: 8.0),
-            Text(stats.zones.toString()),
+            Text(stats.zones.toString(),style: TextStyle(fontSize: 14)),
           ],
         ),
         Column(
           children: [
-            const Text("Cameras"),
+            const Text("Cameras",style: TextStyle(fontSize: 14)),
             const SizedBox(height: 8.0),
-            Text(stats.cameras.toString()),
+            Text(stats.cameras.toString(),style: TextStyle(fontSize: 14)),
           ],
         ),
         Column(
           children: [
-            const Text("Sensors"),
+            const Text("Sensors",style: TextStyle(fontSize: 14)),
             const SizedBox(height: 8.0),
             Text(
-              stats.sensors.toString(),
+              stats.sensors.toString(),style: TextStyle(fontSize: 14),
             ),
           ],
         ),
