@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:orkestria/core/analytics/firebase_analytics_engine.dart';
 import 'package:orkestria/router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +13,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensures that Flutter bindings are initialized.
   final themeController = ThemeController(); // Instance of the theme controller.
   await themeController.loadTheme(); // Loads the theme from preferences.
+  FirebaseAnalyticsEngine.init();
 
   runApp(
     setupProviders( // Configures providers (likely with dependencies).

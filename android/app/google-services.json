@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "869877265911",
+    "project_id": "orkestria-b25db",
+    "storage_bucket": "orkestria-b25db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:869877265911:android:0cceac499311a97231aaf2",
+        "android_client_info": {
+          "package_name": "com.example.orkestria"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9IYizyMoNZ16JjhuQyc0q6DQGPh7tyIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
